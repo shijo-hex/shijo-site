@@ -56,50 +56,21 @@
       background: #121a31;
     }
 
-    .amounts {
+    .actions {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-
-    .amount {
-      padding: 14px 8px;
-      border: 1px solid #2d3a5d;
-      border-radius: 12px;
-      color: white;
-      background: #1a2542;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: bold;
-    }
-
-    .amount:hover,
-    .amount.selected {
-      border-color: #8b5cf6;
-      background: #342266;
-    }
-
-    input {
-      width: 100%;
-      margin-top: 14px;
-      padding: 14px;
-      border: 1px solid #2d3a5d;
-      border-radius: 12px;
-      outline: none;
-      color: white;
-      background: #0d1427;
-      font-size: 15px;
+      gap: 16px;
     }
 
     .pay-button {
+      display: inline-block;
       width: 100%;
-      margin-top: 16px;
       padding: 16px;
-      border: none;
+      border: 2px solid transparent;
       border-radius: 12px;
       color: white;
       background: #8b5cf6;
-      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
       font-size: 16px;
       font-weight: bold;
     }
@@ -108,8 +79,15 @@
       background: #7c3aed;
     }
 
+    .pay-button:focus-visible,
+    .copy-button:focus-visible,
+    .back:focus-visible {
+      outline: 3px solid #5eead4;
+      outline-offset: 2px;
+    }
+
     .or {
-      margin: 25px 0 16px;
+      margin: 0;
       color: #aeb8d3;
     }
 
@@ -120,25 +98,51 @@
       background: white;
     }
 
+    .qr-wrap {
+      display: grid;
+      place-items: center;
+      gap: 12px;
+    }
+
     .upi-id {
-      margin: 16px 0 8px;
+      margin: 0;
       color: #5eead4;
       font-weight: bold;
+      word-break: break-all;
     }
 
     .copy-button {
+      padding: 0;
       border: none;
       color: #aeb8d3;
       background: transparent;
       cursor: pointer;
       text-decoration: underline;
+      font: inherit;
+    }
+
+    .fallback {
+      margin-top: 12px;
+      color: #aeb8d3;
+      font-size: 14px;
+      line-height: 1.5;
     }
 
     .note {
-      margin-top: 22px;
+      margin: 0;
       color: #aeb8d3;
       font-size: 13px;
       line-height: 1.6;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 34px;
+      }
+
+      .card {
+        padding: 18px;
+      }
     }
   </style>
 </head>
@@ -157,125 +161,101 @@
     </p>
 
     <div class="card">
+      <div class="actions">
+        <a
+          class="pay-button"
+          id="payLink"
+          href="#"
+          aria-label="Pay Shijo with any UPI app"
+        >
+          Tap to pay via UPI app
+        </a>
 
-      <div class="amounts">
-        <button class="amount" data-amount="49">₹49</button>
-        <button class="amount selected" data-amount="99">₹99</button>
-        <button class="amount" data-amount="199">₹199</button>
+        <p class="note">
+          Mobile: tap the button to open your installed UPI app.
+          Desktop: scan the QR code using any UPI app on your phone.
+        </p>
+
+        <p class="or">
+          Or scan this universal UPI QR code
+        </p>
+
+        <div class="qr-wrap">
+          <div
+            id="qrcode"
+            role="img"
+            aria-label="QR code for paying Shijo using UPI ID shijosylan at oksbi"
+          ></div>
+
+          <div class="upi-id">
+            UPI ID: <span id="upiIdValue">shijosylan@oksbi</span>
+          </div>
+
+          <button class="copy-button" id="copyButton" type="button">
+            Copy UPI ID
+          </button>
+        </div>
+
+        <p class="fallback" id="fallbackMessage" hidden>
+          If the app did not open, copy the UPI ID and pay manually in your UPI app.
+        </p>
       </div>
-
-      <input
-        id="customAmount"
-        type="number"
-        min="1"
-        placeholder="Or enter a custom amount"
-      >
-
-      <button class="pay-button" id="payButton">
-        Pay ₹99 via UPI
-      </button>
-
-      <div class="or">
-        Or scan this QR code using any UPI app
-      </div>
-
-      <div id="qrcode"></div>
-
-      <div class="upi-id">
-        UPI ID: shijosylan@oksbi
-      </div>
-
-      <button class="copy-button" id="copyButton">
-        Copy UPI ID
-      </button>
-
-      <p class="note">
-        On mobile, tap the payment button to open a UPI app.
-        On desktop, scan the QR code with your phone.
-      </p>
-
     </div>
   </div>
 
   <script>
     const upiId = "shijosylan@oksbi";
     const payeeName = "Shijo";
-
-    let selectedAmount = "99";
-
-    const amountButtons = document.querySelectorAll(".amount");
-    const customAmount = document.getElementById("customAmount");
-    const payButton = document.getElementById("payButton");
+    const payLink = document.getElementById("payLink");
     const qrCodeBox = document.getElementById("qrcode");
     const copyButton = document.getElementById("copyButton");
+    const fallbackMessage = document.getElementById("fallbackMessage");
+    const upiLink = "upi://pay?" + new URLSearchParams({
+      pa: upiId,
+      pn: payeeName
+    }).toString();
 
-    function createUpiLink() {
-      const amount = customAmount.value || selectedAmount;
+    payLink.href = upiLink;
 
-      const params = new URLSearchParams({
-        pa: upiId,
-        pn: payeeName,
-        cu: "INR"
-      });
+    new QRCode(qrCodeBox, {
+      text: upiLink,
+      width: 180,
+      height: 180,
+      colorDark: "#000000",
+      colorLight: "#ffffff"
+    });
 
-      if (amount && Number(amount) > 0) {
-        params.set("am", amount);
+    payLink.addEventListener("click", () => {
+      setTimeout(() => {
+        if (document.visibilityState === "visible") {
+          fallbackMessage.hidden = false;
+        }
+      }, 1400);
+    });
+
+    async function copyUpiId() {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(upiId);
+        return;
       }
 
-      return "upi://pay?" + params.toString();
+      const tempInput = document.createElement("textarea");
+      tempInput.value = upiId;
+      document.body.appendChild(tempInput);
+      tempInput.focus();
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
     }
-
-    function updatePaymentDetails() {
-      const amount = customAmount.value || selectedAmount;
-
-      payButton.textContent =
-        amount && Number(amount) > 0
-          ? `Pay ₹${amount} via UPI`
-          : "Pay via UPI";
-
-      qrCodeBox.innerHTML = "";
-
-      new QRCode(qrCodeBox, {
-        text: createUpiLink(),
-        width: 180,
-        height: 180,
-        colorDark: "#000000",
-        colorLight: "#ffffff"
-      });
-    }
-
-    amountButtons.forEach(button => {
-      button.addEventListener("click", () => {
-        selectedAmount = button.dataset.amount;
-        customAmount.value = "";
-
-        amountButtons.forEach(item => {
-          item.classList.remove("selected");
-        });
-
-        button.classList.add("selected");
-        updatePaymentDetails();
-      });
-    });
-
-    customAmount.addEventListener("input", () => {
-      amountButtons.forEach(item => {
-        item.classList.remove("selected");
-      });
-
-      updatePaymentDetails();
-    });
-
-    payButton.addEventListener("click", () => {
-      window.location.href = createUpiLink();
-    });
 
     copyButton.addEventListener("click", async () => {
-      await navigator.clipboard.writeText(upiId);
-      copyButton.textContent = "Copied!";
+      try {
+        await copyUpiId();
+        copyButton.textContent = "Copied!";
+      } catch (error) {
+        copyButton.textContent = "Copy failed. Use manual copy.";
+      }
     });
-
-    updatePaymentDetails();
   </script>
 
 </body>
