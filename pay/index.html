@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Support Shijo</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      background: #090d1a;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    .back {
+      display: block;
+      margin-bottom: 35px;
+      color: #aeb8d3;
+      text-align: left;
+      text-decoration: none;
+    }
+
+    h1 {
+      margin-bottom: 12px;
+      font-size: 42px;
+    }
+
+    .description {
+      color: #aeb8d3;
+      line-height: 1.6;
+    }
+
+    .card {
+      margin-top: 28px;
+      padding: 24px;
+      border: 1px solid #2d3a5d;
+      border-radius: 20px;
+      background: #121a31;
+    }
+
+    .amounts {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .amount {
+      padding: 14px 8px;
+      border: 1px solid #2d3a5d;
+      border-radius: 12px;
+      color: white;
+      background: #1a2542;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .amount:hover,
+    .amount.selected {
+      border-color: #8b5cf6;
+      background: #342266;
+    }
+
+    input {
+      width: 100%;
+      margin-top: 14px;
+      padding: 14px;
+      border: 1px solid #2d3a5d;
+      border-radius: 12px;
+      outline: none;
+      color: white;
+      background: #0d1427;
+      font-size: 15px;
+    }
+
+    .pay-button {
+      width: 100%;
+      margin-top: 16px;
+      padding: 16px;
+      border: none;
+      border-radius: 12px;
+      color: white;
+      background: #8b5cf6;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .pay-button:hover {
+      background: #7c3aed;
+    }
+
+    .or {
+      margin: 25px 0 16px;
+      color: #aeb8d3;
+    }
+
+    #qrcode {
+      display: inline-block;
+      padding: 12px;
+      border-radius: 12px;
+      background: white;
+    }
+
+    .upi-id {
+      margin: 16px 0 8px;
+      color: #5eead4;
+      font-weight: bold;
+    }
+
+    .copy-button {
+      border: none;
+      color: #aeb8d3;
+      background: transparent;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .note {
+      margin-top: 22px;
+      color: #aeb8d3;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <a class="back" href="/">← Back to home</a>
+
+    <h1>Support my work</h1>
+
+    <p class="description">
+      If my projects or content helped you, you can support me through UPI.
+      Thank you!
+    </p>
+
+    <div class="card">
+
+      <div class="amounts">
+        <button class="amount" data-amount="49">₹49</button>
+        <button class="amount selected" data-amount="99">₹99</button>
+        <button class="amount" data-amount="199">₹199</button>
+      </div>
+
+      <input
+        id="customAmount"
+        type="number"
+        min="1"
+        placeholder="Or enter a custom amount"
+      >
+
+      <button class="pay-button" id="payButton">
+        Pay ₹99 via UPI
+      </button>
+
+      <div class="or">
+        Or scan this QR code using any UPI app
+      </div>
+
+      <div id="qrcode"></div>
+
+      <div class="upi-id">
+        UPI ID: shijo@oksbi
+      </div>
+
+      <button class="copy-button" id="copyButton">
+        Copy UPI ID
+      </button>
+
+      <p class="note">
+        On mobile, tap the payment button to open a UPI app.
+        On desktop, scan the QR code with your phone.
+      </p>
+
+    </div>
+  </div>
+
+  <script>
+    const upiId = "shijo@oksbi";
+    const payeeName = "Shijo";
+
+    let selectedAmount = "99";
+
+    const amountButtons = document.querySelectorAll(".amount");
+    const customAmount = document.getElementById("customAmount");
+    const payButton = document.getElementById("payButton");
+    const qrCodeBox = document.getElementById("qrcode");
+    const copyButton = document.getElementById("copyButton");
+
+    function createUpiLink() {
+      const amount = customAmount.value || selectedAmount;
+
+      const params = new URLSearchParams({
+        pa: upiId,
+        pn: payeeName,
+        cu: "INR"
+      });
+
+      if (amount && Number(amount) > 0) {
+        params.set("am", amount);
+      }
+
+      return "upi://pay?" + params.toString();
+    }
+
+    function updatePaymentDetails() {
+      const amount = customAmount.value || selectedAmount;
+
+      payButton.textContent =
+        amount && Number(amount) > 0
+          ? `Pay ₹${amount} via UPI`
+          : "Pay via UPI";
+
+      qrCodeBox.innerHTML = "";
+
+      new QRCode(qrCodeBox, {
+        text: createUpiLink(),
+        width: 180,
+        height: 180,
+        colorDark: "#000000",
+        colorLight: "#ffffff"
+      });
+    }
+
+    amountButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        selectedAmount = button.dataset.amount;
+        customAmount.value = "";
+
+        amountButtons.forEach(item => {
+          item.classList.remove("selected");
+        });
+
+        button.classList.add("selected");
+        updatePaymentDetails();
+      });
+    });
+
+    customAmount.addEventListener("input", () => {
+      amountButtons.forEach(item => {
+        item.classList.remove("selected");
+      });
+
+      updatePaymentDetails();
+    });
+
+    payButton.addEventListener("click", () => {
+      window.location.href = createUpiLink();
+    });
+
+    copyButton.addEventListener("click", async () => {
+      await navigator.clipboard.writeText(upiId);
+      copyButton.textContent = "Copied!";
+    });
+
+    updatePaymentDetails();
+  </script>
+
+</body>
+</html>
