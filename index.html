@@ -1,378 +1,289 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Support Shijo</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shijo</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  :root {
+    --bg: #06070d;
+    --panel: rgba(255,255,255,0.04);
+    --panel-border: rgba(255,255,255,0.09);
+    --text: #f4f4f6;
+    --muted: #9099b3;
+    --accent: #8b5cf6;
+    --accent-2: #5eead4;
+    --glow: rgba(139, 92, 246, 0.4);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
 
-  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  .blob {
+    position: fixed;
+    top: -15%;
+    right: -12%;
+    width: 50vw;
+    height: 50vw;
+    max-width: 600px;
+    max-height: 600px;
+    background: radial-gradient(circle at 30% 30%, var(--glow), transparent 70%);
+    filter: blur(90px);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+  }
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+  /* ---- nav ---- */
+  .nav {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: calc(1.5rem + env(safe-area-inset-top, 0px)) clamp(1.5rem, 5vw, 4rem) 1.5rem;
+  }
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 24px;
-      background: #090d1a;
-      color: white;
-      font-family: Arial, sans-serif;
-    }
+  .nav .logo {
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    font-size: 1.05rem;
+  }
 
-    .container {
-      width: 100%;
-      max-width: 500px;
-      text-align: center;
-    }
+  .nav .links {
+    display: flex;
+    gap: 2rem;
+  }
+  .nav .links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s ease;
+  }
+  .nav .links a:hover { color: var(--text); }
 
-    .back {
-      display: block;
-      margin-bottom: 35px;
-      color: #aeb8d3;
-      text-align: left;
-      text-decoration: none;
-    }
+  @media (max-width: 640px) {
+    .nav .links { display: none; }
+  }
 
-    h1 {
-      margin-bottom: 12px;
-      font-size: 42px;
-    }
+  /* ---- hero ---- */
+  .hero {
+    position: relative;
+    z-index: 2;
+    min-height: 78vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2rem clamp(1.5rem, 5vw, 4rem);
+    max-width: 1000px;
+  }
 
-    .description {
-      color: #aeb8d3;
-      line-height: 1.6;
-    }
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-size: 0.8rem;
+    color: var(--accent-2);
+    margin: 0 0 1.25rem 0;
+  }
 
-    .card {
-      margin-top: 28px;
-      padding: 24px;
-      border: 1px solid #2d3a5d;
-      border-radius: 20px;
-      background: #121a31;
-      display: flex;
-      flex-direction: column;
-    }
+  .heading {
+    font-size: clamp(2.4rem, 7vw, 5rem);
+    line-height: 1.05;
+    font-weight: 650;
+    letter-spacing: -0.03em;
+    margin: 0 0 1.5rem 0;
+  }
+  .line-mask { display: block; overflow: hidden; }
+  .line { display: block; }
 
-    /* Mobile-first: the direct pay button is the priority action. */
-    .pay-section {
-      order: 1;
-    }
+  .subtext {
+    max-width: 46ch;
+    color: var(--muted);
+    font-size: clamp(1rem, 1.5vw, 1.15rem);
+    line-height: 1.6;
+    margin: 0 0 2.25rem 0;
+  }
 
-    .qr-section {
-      order: 2;
-      margin-top: 25px;
-    }
+  .cta-row { display: flex; gap: 1rem; flex-wrap: wrap; }
 
-    /* From tablet width up, no installed UPI app can be assumed to launch
-       automatically, so the QR code becomes the primary action instead. */
-    @media (min-width: 768px) {
-      .pay-section {
-        order: 2;
-        margin-top: 25px;
-      }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.9rem 1.6rem;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .cta.primary { background: var(--text); color: var(--bg); }
+  .cta.chaya {
+    border: 1px solid rgba(94, 234, 212, 0.4);
+    color: var(--text);
+    background: linear-gradient(135deg, rgba(94,234,212,0.18), rgba(139,92,246,0.12));
+  }
+  .cta.chaya:hover {
+    border-color: var(--accent-2);
+    transform: translateY(-1px);
+  }
 
-      .qr-section {
-        order: 1;
-        margin-top: 0;
-      }
-    }
+  /* ---- work section ---- */
+  .section {
+    position: relative;
+    z-index: 2;
+    padding: 3rem clamp(1.5rem, 5vw, 4rem) 5rem;
+    max-width: 1100px;
+  }
 
-    :focus-visible {
-      outline: 2px solid #8b5cf6;
-      outline-offset: 2px;
-    }
+  .section-title {
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    margin: 0 0 2rem 0;
+  }
 
-    .amounts {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+  }
 
-    .amount {
-      padding: 14px 8px;
-      border: 1px solid #2d3a5d;
-      border-radius: 12px;
-      color: white;
-      background: #1a2542;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: bold;
-    }
+  .project-card {
+    padding: 1.5rem;
+    border-radius: 20px;
+    background: linear-gradient(180deg, var(--panel), rgba(255,255,255,0.01));
+    border: 1px solid var(--panel-border);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+  .project-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(139,92,246,0.4);
+  }
 
-    .amount:hover,
-    .amount.selected {
-      border-color: #8b5cf6;
-      background: #342266;
-    }
+  .project-card h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    letter-spacing: -0.01em;
+  }
+  .project-card p {
+    margin: 0 0 1rem 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+  .project-card a {
+    color: var(--accent-2);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .project-card a:hover { text-decoration: underline; }
 
-    input {
-      width: 100%;
-      margin-top: 14px;
-      padding: 14px;
-      border: 1px solid #2d3a5d;
-      border-radius: 12px;
-      outline: none;
-      color: white;
-      background: #0d1427;
-      font-size: 15px;
-    }
-
-    .pay-button {
-      width: 100%;
-      margin-top: 16px;
-      padding: 16px;
-      border: none;
-      border-radius: 12px;
-      color: white;
-      background: #8b5cf6;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: bold;
-    }
-
-    .pay-button:hover {
-      background: #7c3aed;
-    }
-
-    .qr-caption {
-      margin: 0 0 16px;
-      color: #aeb8d3;
-      font-weight: 600;
-    }
-
-    #qrcode {
-      display: inline-block;
-      padding: 12px;
-      border-radius: 12px;
-      background: white;
-    }
-
-    .upi-id {
-      margin: 16px 0 8px;
-      color: #5eead4;
-      font-weight: bold;
-    }
-
-    .copy-button {
-      border: none;
-      color: #aeb8d3;
-      background: transparent;
-      cursor: pointer;
-      text-decoration: underline;
-    }
-
-    .note {
-      margin-top: 22px;
-      color: #aeb8d3;
-      font-size: 13px;
-      line-height: 1.6;
-    }
-
-    .status {
-      min-height: 18px;
-      margin: 12px 0 0;
-      font-size: 13px;
-      color: #5eead4;
-      line-height: 1.5;
-    }
-
-    .visually-hidden {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-      clip: rect(0 0 0 0);
-      white-space: nowrap;
-    }
-  </style>
+  /* ---- footer ---- */
+  footer {
+    position: relative;
+    z-index: 2;
+    padding: 2.5rem clamp(1.5rem, 5vw, 4rem) calc(2.5rem + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid var(--panel-border);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--text); }
+</style>
 </head>
-
 <body>
 
-  <div class="container">
+<div class="blob" aria-hidden="true"></div>
 
-    <a class="back" href="/">← Back to home</a>
+<nav class="nav" id="nav">
+  <span class="logo">Shijo</span>
+  <div class="links">
+    <a href="#work">Work</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
 
-    <h1>Support my work</h1>
+<section class="hero" id="hero">
+  <p class="eyebrow">Full stack developer</p>
+  <h1 class="heading" id="heading">
+    <span class="line-mask"><span class="line">Hi, I'm Shijo.</span></span>
+    <span class="line-mask"><span class="line">I build things</span></span>
+    <span class="line-mask"><span class="line">for the web.</span></span>
+  </h1>
+  <p class="subtext">
+    I design and build efficient websites and web apps — from clean landing pages to full sales funnels that help products sell more.
+  </p>
+  <div class="cta-row">
+    <a class="cta primary" href="#work">See my work</a>
+    <a class="cta chaya" href="./pay/">☕ Buy me a chaya</a>
+  </div>
+</section>
 
-    <p class="description">
-       Buy Me A Chaya :p
-    </p>
-
-    <div class="card">
-
-      <div class="pay-section">
-        <div class="amounts" role="group" aria-label="Preset amounts">
-          <button class="amount" data-amount="49" aria-pressed="false">₹49</button>
-          <button class="amount selected" data-amount="99" aria-pressed="true">₹99</button>
-          <button class="amount" data-amount="199" aria-pressed="false">₹199</button>
-        </div>
-
-        <label for="customAmount" class="visually-hidden">Custom amount in rupees</label>
-        <input
-          id="customAmount"
-          type="number"
-          min="1"
-          inputmode="decimal"
-          placeholder="Or enter a custom amount"
-        >
-
-        <button class="pay-button" id="payButton" aria-describedby="payStatus">
-          Pay ₹99 via UPI
-        </button>
-
-        <p class="status" id="payStatus" role="status" aria-live="polite"></p>
-      </div>
-
-      <div class="qr-section">
-        <p class="qr-caption">Scan with any UPI app</p>
-
-        <div
-          id="qrcode"
-          role="img"
-          aria-label="UPI QR code for shijosylan@oksbi. Scan with Google Pay, PhonePe, Paytm, BHIM, or any UPI-enabled banking app."
-        ></div>
-
-        <div class="upi-id">
-          UPI ID: shijosylan@oksbi
-        </div>
-
-        <button
-          class="copy-button"
-          id="copyButton"
-          aria-live="polite"
-        >
-          Copy UPI ID
-        </button>
-      </div>
-
-      <p class="note">
-        On mobile, tap the payment button to open your UPI app.
-        On desktop, scan the QR code with any UPI app on your phone.
-      </p>
-
+<section class="section" id="work">
+  <h2 class="section-title">Selected work</h2>
+  <div class="grid">
+    <div class="project-card">
+      <h3>Project one</h3>
+      <p>Short description of the project, the stack used, and the problem it solved.</p>
+      <a href="#">View project →</a>
+    </div>
+    <div class="project-card">
+      <h3>Project two</h3>
+      <p>Short description of the project, the stack used, and the problem it solved.</p>
+      <a href="#">View project →</a>
+    </div>
+    <div class="project-card">
+      <h3>Project three</h3>
+      <p>Short description of the project, the stack used, and the problem it solved.</p>
+      <a href="#">View project →</a>
     </div>
   </div>
+</section>
 
-  <script>
-    const upiId = "shijosylan@oksbi";
-    const payeeName = "Shijo";
+<footer id="contact">
+  <span>© 2026 Shijo</span>
+  <div style="display:flex; gap:1.5rem;">
+    <a href="./pay/">Buy me a chaya</a>
+    <a href="https://github.com/shijo-hex" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</footer>
 
-    let selectedAmount = "99";
+<script>
+  const navEl = document.getElementById('nav');
+  const titleLines = document.querySelectorAll('#heading .line');
+  const eyebrowEl = document.querySelector('.eyebrow');
+  const subtextEl = document.querySelector('.subtext');
+  const ctaRow = document.querySelector('.cta-row');
 
-    const amountButtons = document.querySelectorAll(".amount");
-    const customAmount = document.getElementById("customAmount");
-    const payButton = document.getElementById("payButton");
-    const qrCodeBox = document.getElementById("qrcode");
-    const copyButton = document.getElementById("copyButton");
-    const payStatus = document.getElementById("payStatus");
+  const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+  tl.from(navEl, { y: -20, opacity: 0, duration: 0.6 })
+    .from(eyebrowEl, { y: 16, opacity: 0, duration: 0.6 }, '-=0.3')
+    .from(titleLines, { yPercent: 120, opacity: 0, duration: 1, stagger: 0.12 }, '-=0.4')
+    .from(subtextEl, { y: 16, opacity: 0, duration: 0.6 }, '-=0.5')
+    .from(ctaRow, { y: 16, opacity: 0, duration: 0.6 }, '-=0.4');
 
-    function isMobileDevice() {
-      return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    }
-
-    function createUpiLink() {
-      const amount = customAmount.value || selectedAmount;
-
-      const params = new URLSearchParams({
-        pa: upiId,
-        pn: payeeName,
-        cu: "INR"
-      });
-
-      if (amount && Number(amount) > 0) {
-        params.set("am", amount);
-      }
-
-      return "upi://pay?" + params.toString();
-    }
-
-    function updatePaymentDetails() {
-      const amount = customAmount.value || selectedAmount;
-
-      payButton.textContent =
-        amount && Number(amount) > 0
-          ? `Pay ₹${amount} via UPI`
-          : "Pay via UPI";
-
-      qrCodeBox.innerHTML = "";
-
-      new QRCode(qrCodeBox, {
-        text: createUpiLink(),
-        width: 180,
-        height: 180,
-        colorDark: "#000000",
-        colorLight: "#ffffff"
-      });
-    }
-
-    amountButtons.forEach(button => {
-      button.addEventListener("click", () => {
-        selectedAmount = button.dataset.amount;
-        customAmount.value = "";
-
-        amountButtons.forEach(item => {
-          item.classList.remove("selected");
-          item.setAttribute("aria-pressed", "false");
-        });
-
-        button.classList.add("selected");
-        button.setAttribute("aria-pressed", "true");
-        updatePaymentDetails();
-      });
+  gsap.utils.toArray('.project-card').forEach((card, i) => {
+    gsap.from(card, {
+      y: 30,
+      opacity: 0,
+      duration: 0.7,
+      delay: 0.1 * i,
+      ease: 'power3.out',
+      scrollTrigger: undefined
     });
-
-    customAmount.addEventListener("input", () => {
-      amountButtons.forEach(item => {
-        item.classList.remove("selected");
-        item.setAttribute("aria-pressed", "false");
-      });
-
-      updatePaymentDetails();
-    });
-
-    payButton.addEventListener("click", () => {
-      // Desktops/laptops have no UPI app to hand off to, so don't attempt
-      // a navigation that can only fail — point straight at the QR instead.
-      if (!isMobileDevice()) {
-        payStatus.textContent = "No UPI app on this device — scan the QR code below with your phone instead.";
-        document.getElementById("qrcode").scrollIntoView({ behavior: "smooth", block: "center" });
-        return;
-      }
-
-      payStatus.textContent = "Opening your UPI app…";
-      window.location.href = createUpiLink();
-
-      // If the tab still has focus shortly after, no UPI app intercepted
-      // the link — the device likely has none installed. Fail gracefully
-      // instead of leaving the page looking stuck.
-      setTimeout(() => {
-        if (document.hasFocus()) {
-          payStatus.textContent = "Couldn't open a UPI app. Scan the QR code below, or copy the UPI ID.";
-        }
-      }, 1800);
-    });
-
-    copyButton.addEventListener("click", async () => {
-      try {
-        await navigator.clipboard.writeText(upiId);
-        copyButton.textContent = "UPI ID copied!";
-      } catch (err) {
-        copyButton.textContent = "Couldn't copy — please copy manually.";
-      }
-
-      setTimeout(() => {
-        copyButton.textContent = "Copy UPI ID";
-      }, 2000);
-    });
-
-    updatePaymentDetails();
-  </script>
+  });
+</script>
 
 </body>
 </html>
