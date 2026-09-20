@@ -1,0 +1,744 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shijo — Software Engineer</title>
+<meta name="description" content="Shijo is a software engineer building AI/ML systems and full-stack products — B.Tech CSE, India.">
+<meta name="theme-color" content="#090b12">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Shijo — Software Engineer">
+<meta property="og:description" content="AI/ML, full-stack, and product engineering. Selected work and a way to get in touch.">
+<meta property="og:url" content="https://shijo.site/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Shijo — Software Engineer">
+<meta name="twitter:description" content="AI/ML, full-stack, and product engineering.">
+<link rel="canonical" href="https://shijo.site/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23090b12%22/><text x=%2250%22 y=%2268%22 font-size=%2258%22 font-family=%22monospace%22 fill=%22%238b7bff%22 text-anchor=%22middle%22>S</text></svg>">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   0. TOKENS
+   ============================================================ */
+:root{
+  --bg:        #090b12;
+  --bg-2:      #0d0f1a;
+  --surface:   #12141f;
+  --border:    #23263a;
+  --border-2:  #2e3149;
+  --text:      #f2f2f4;
+  --muted:     #9a9db3;
+  --subtle:    #5e6178;
+  --accent:    #8b7bff;
+  --accent-2:  #58e0c2;
+  --accent-dim: rgba(139,123,255,.14);
+
+  --font-display: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+  --font-body:    'Inter', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono:    'JetBrains Mono', 'SFMono-Regular', Menlo, monospace;
+
+  --edge: clamp(20px, 6vw, 72px);
+  --dur-fast: 180ms;
+  --dur-med:  420ms;
+  --ease: cubic-bezier(.22,.61,.36,1);
+}
+
+*,*::before,*::after{ box-sizing:border-box; }
+html{
+  background:var(--bg);
+  scroll-behavior:smooth;
+  scroll-padding-top: calc(88px + env(safe-area-inset-top,0px));
+}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-body);
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  overflow-x:hidden;
+}
+img,svg{ max-width:100%; display:block; }
+a{ color:inherit; text-decoration:none; }
+ul{ margin:0; padding:0; list-style:none; }
+button{ font:inherit; color:inherit; background:none; border:0; cursor:pointer; }
+h1,h2,h3,p{ margin:0; }
+
+::selection{ background:var(--accent); color:#0a0a0f; }
+
+:focus-visible{
+  outline:2px solid var(--accent-2);
+  outline-offset:3px;
+  border-radius:2px;
+}
+
+.visually-hidden{
+  position:absolute; width:1px; height:1px; overflow:hidden;
+  clip:rect(0 0 0 0); white-space:nowrap; border:0; padding:0; margin:-1px;
+}
+
+.skip-link{
+  position:fixed; top:-100px; left:12px; z-index:999;
+  background:var(--accent); color:#0a0a0f; font-family:var(--font-mono);
+  font-size:13px; font-weight:500; padding:10px 16px; border-radius:6px;
+  transition:top var(--dur-fast) var(--ease);
+}
+.skip-link:focus{ top:12px; }
+
+::-webkit-scrollbar{ width:10px; }
+::-webkit-scrollbar-track{ background:var(--bg); }
+::-webkit-scrollbar-thumb{ background:var(--border-2); border-radius:8px; }
+
+/* ============================================================
+   1. TYPE SCALE
+   ============================================================ */
+.mono{
+  font-family:var(--font-mono);
+  letter-spacing:.06em;
+}
+.eyebrow{
+  font-family:var(--font-mono);
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  color:var(--subtle);
+}
+.eyebrow b{ color:var(--accent-2); font-weight:500; }
+
+h2.section-title{
+  font-family:var(--font-display);
+  font-weight:600;
+  font-size:clamp(1.8rem, 4.2vw, 3.1rem);
+  line-height:1.05;
+  letter-spacing:-.01em;
+  color:var(--text);
+}
+
+.section{
+  padding:clamp(72px,12vw,140px) var(--edge);
+  max-width:1320px;
+  margin:0 auto;
+  position:relative;
+}
+.section-head{
+  display:flex; align-items:flex-end; justify-content:space-between; gap:24px;
+  margin-bottom:clamp(36px,6vw,64px);
+  border-bottom:1px solid var(--border);
+  padding-bottom:22px;
+  flex-wrap:wrap;
+}
+.hr{ height:1px; background:var(--border); border:0; margin:0; }
+
+/* ============================================================
+   2. LOADER / INTRO
+   ============================================================ */
+#intro{
+  position:fixed; inset:0; z-index:9999;
+  background:var(--bg);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:18px;
+}
+#intro .intro-mark{
+  font-family:var(--font-display); font-weight:700;
+  font-size:clamp(1.6rem,5vw,2.4rem); letter-spacing:-.02em;
+}
+#intro .intro-mark span{ color:var(--accent); }
+#intro .intro-status{
+  font-family:var(--font-mono); font-size:12px; letter-spacing:.14em;
+  color:var(--subtle); text-transform:uppercase;
+}
+#intro .intro-bar{
+  width:min(220px,60vw); height:1px; background:var(--border); position:relative; overflow:hidden;
+}
+#intro .intro-bar i{
+  position:absolute; inset:0; background:var(--accent);
+  transform:scaleX(0); transform-origin:left; display:block;
+}
+#intro.leaving{ transition:opacity var(--dur-med) var(--ease); opacity:0; pointer-events:none; }
+body.intro-lock{ overflow:hidden; height:100vh; }
+
+/* ============================================================
+   3. CUSTOM CURSOR (desktop / fine pointer / motion-ok only)
+   ============================================================ */
+#cursor{
+  position:fixed; top:0; left:0; z-index:9998;
+  width:22px; height:22px; border-radius:50%;
+  border:1px solid var(--accent-2);
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+  transition:width var(--dur-fast) var(--ease), height var(--dur-fast) var(--ease),
+             background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+  mix-blend-mode:difference;
+  will-change:transform;
+}
+#cursor.-link{ width:52px; height:52px; background:var(--accent-2); border-color:transparent; }
+#cursor.-view::after{
+  content:'VIEW'; font-family:var(--font-mono); font-size:9px; letter-spacing:.08em;
+  color:#0a0a0f; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+}
+body.has-custom-cursor, body.has-custom-cursor a, body.has-custom-cursor button{ cursor:none; }
+
+/* ============================================================
+   4. NAV
+   ============================================================ */
+header.nav{
+  position:fixed; top:0; left:0; right:0; z-index:500;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:20px var(--edge);
+  padding-top:calc(20px + env(safe-area-inset-top,0px));
+  background:transparent;
+  border-bottom:1px solid transparent;
+  transition:background var(--dur-med) var(--ease), border-color var(--dur-med) var(--ease), padding var(--dur-med) var(--ease);
+}
+header.nav.-scrolled{
+  background:rgba(9,11,18,.78);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border-bottom-color:var(--border);
+  padding-top:calc(14px + env(safe-area-inset-top,0px));
+  padding-bottom:14px;
+}
+.nav-brand{
+  font-family:var(--font-mono); font-size:14px; letter-spacing:.06em;
+  display:flex; align-items:center; gap:8px;
+}
+.nav-brand .dot{ width:6px; height:6px; border-radius:50%; background:var(--accent-2); }
+.nav-links{ display:flex; gap:34px; }
+.nav-links a{
+  font-family:var(--font-mono); font-size:12.5px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--muted); position:relative; padding:4px 0;
+}
+.nav-links a::after{
+  content:''; position:absolute; left:0; right:100%; bottom:0; height:1px; background:var(--accent-2);
+  transition:right var(--dur-med) var(--ease);
+}
+.nav-links a:hover, .nav-links a.-active{ color:var(--text); }
+.nav-links a:hover::after, .nav-links a.-active::after{ right:0; }
+
+.nav-toggle{ display:none; width:40px; height:40px; align-items:center; justify-content:center; }
+.nav-toggle span{ display:block; width:18px; height:1px; background:var(--text); position:relative; }
+.nav-toggle span::before,.nav-toggle span::after{
+  content:''; position:absolute; left:0; width:18px; height:1px; background:var(--text); transition:transform var(--dur-fast);
+}
+.nav-toggle span::before{ top:-6px; } .nav-toggle span::after{ top:6px; }
+
+#mobile-menu{
+  position:fixed; inset:0; z-index:600; background:var(--bg-2);
+  display:flex; flex-direction:column; justify-content:center; gap:26px; padding:0 var(--edge);
+  transform:translateY(-100%); transition:transform var(--dur-med) var(--ease);
+}
+#mobile-menu.-open{ transform:translateY(0); }
+#mobile-menu a{ font-family:var(--font-display); font-size:clamp(1.8rem,9vw,2.6rem); font-weight:600; color:var(--text); }
+#mobile-menu .mm-close{ position:absolute; top:20px; right:var(--edge); }
+
+/* ============================================================
+   5. HERO
+   ============================================================ */
+.hero{
+  min-height:100svh;
+  display:flex; flex-direction:column; justify-content:center;
+  padding:120px var(--edge) 60px;
+  position:relative;
+  overflow:hidden;
+}
+#hero-canvas{
+  position:absolute; inset:0; z-index:0; opacity:.55; pointer-events:none;
+}
+.hero-inner{ position:relative; z-index:1; }
+.hero-meta{
+  display:flex; gap:28px; flex-wrap:wrap; margin-bottom:28px;
+}
+.hero-name{
+  font-family:var(--font-display); font-weight:700;
+  font-size:clamp(3.4rem, 15vw, 10.5rem);
+  line-height:.86; letter-spacing:-.03em;
+  margin:0 0 22px;
+}
+.hero-role{
+  font-family:var(--font-display); font-weight:500;
+  font-size:clamp(1.15rem,2.6vw,1.65rem);
+  color:var(--muted); max-width:640px; line-height:1.35;
+}
+.hero-role b{ color:var(--text); font-weight:500; }
+.hero-role .sep{ color:var(--accent-2); margin:0 .5em; }
+.hero-foot{
+  margin-top:clamp(48px,9vw,96px);
+  display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
+}
+.scroll-cue{
+  display:flex; align-items:center; gap:10px;
+  font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; color:var(--subtle);
+}
+.scroll-cue i{
+  width:1px; height:34px; background:var(--border-2); position:relative; overflow:hidden; display:block;
+}
+.scroll-cue i::after{
+  content:''; position:absolute; top:-100%; left:0; width:100%; height:100%; background:var(--accent-2);
+  animation:cue 1.8s ease-in-out infinite;
+}
+@keyframes cue{ 0%{top:-100%;} 60%{top:100%;} 100%{top:100%;} }
+
+/* ============================================================
+   6. BUTTONS
+   ============================================================ */
+.btn{
+  display:inline-flex; align-items:center; gap:10px;
+  font-family:var(--font-mono); font-size:12.5px; letter-spacing:.08em; text-transform:uppercase;
+  padding:15px 26px; border-radius:2px; border:1px solid var(--border-2);
+  transition:border-color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+.btn:hover{ border-color:var(--accent-2); color:var(--accent-2); }
+.btn.-solid{ background:var(--text); color:var(--bg); border-color:var(--text); }
+.btn.-solid:hover{ background:var(--accent-2); border-color:var(--accent-2); color:#0a0a0f; }
+
+/* ============================================================
+   7. ABOUT
+   ============================================================ */
+.about-grid{ display:grid; grid-template-columns:1fr; gap:48px; }
+.about-statement{
+  font-family:var(--font-display); font-weight:600;
+  font-size:clamp(2rem,5.4vw,4rem); line-height:1.08; letter-spacing:-.01em;
+  max-width:14ch;
+}
+.about-statement .line{ overflow:hidden; display:block; }
+.about-statement .line span{
+  display:block; transform:translateY(110%); transition:transform 900ms var(--ease);
+}
+.about-statement.-in .line span{ transform:translateY(0); }
+.about-body{ max-width:52ch; color:var(--muted); font-size:1.02rem; }
+.about-body p + p{ margin-top:16px; }
+.about-facts{ margin-top:36px; display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:22px; max-width:520px; }
+.about-facts div{ border-top:1px solid var(--border); padding-top:10px; }
+.about-facts .v{ font-family:var(--font-display); font-size:1.5rem; font-weight:600; }
+.about-facts .k{ font-family:var(--font-mono); font-size:11px; color:var(--subtle); letter-spacing:.08em; text-transform:uppercase; margin-top:4px; }
+
+@media(min-width:860px){
+  .about-grid{ grid-template-columns:1.1fr 1fr; align-items:start; }
+}
+
+/* ============================================================
+   8. SKILLS
+   ============================================================ */
+.skills-grid{ display:grid; grid-template-columns:1fr; }
+.skill-cat{
+  border-top:1px solid var(--border);
+  padding:26px 0;
+  display:grid; grid-template-columns:56px 1fr; gap:20px;
+  cursor:pointer;
+}
+.skill-cat:last-child{ border-bottom:1px solid var(--border); }
+.skill-cat .num{ font-family:var(--font-mono); color:var(--subtle); font-size:13px; padding-top:6px; }
+.skill-cat .cat-name{
+  font-family:var(--font-display); font-weight:600; font-size:clamp(1.3rem,3vw,1.9rem);
+  display:flex; align-items:center; justify-content:space-between; gap:20px;
+}
+.skill-cat .cat-name small{ font-family:var(--font-mono); font-size:11px; color:var(--subtle); font-weight:400; letter-spacing:.06em; }
+.skill-items{
+  display:grid; grid-template-rows:0fr; transition:grid-template-rows 420ms var(--ease);
+}
+.skill-items-inner{ overflow:hidden; }
+.skill-cat.-open .skill-items{ grid-template-rows:1fr; }
+.skill-tags{ display:flex; flex-wrap:wrap; gap:10px; padding-top:18px; }
+.skill-tags span{
+  font-family:var(--font-mono); font-size:12.5px; color:var(--muted);
+  border:1px solid var(--border-2); border-radius:2px; padding:7px 12px;
+  transition:color var(--dur-fast), border-color var(--dur-fast);
+}
+.skill-cat.-open .skill-tags span:hover{ color:var(--accent-2); border-color:var(--accent-2); }
+.skill-cat .chev{ transition:transform var(--dur-med) var(--ease); color:var(--subtle); flex-shrink:0; }
+.skill-cat.-open .chev{ transform:rotate(45deg); color:var(--accent-2); }
+
+/* ============================================================
+   9. JOURNEY / TIMELINE
+   ============================================================ */
+.timeline{ position:relative; display:grid; gap:0; }
+.timeline-track{
+  position:absolute; left:9px; top:6px; bottom:6px; width:1px; background:var(--border);
+}
+.timeline-track i{
+  position:absolute; top:0; left:0; width:100%; height:0%; background:var(--accent-2); display:block;
+}
+.t-node{
+  position:relative; padding:0 0 56px 40px; display:grid; gap:6px;
+}
+.t-node::before{
+  content:''; position:absolute; left:0; top:6px; width:19px; height:19px; border-radius:50%;
+  border:1px solid var(--border-2); background:var(--bg); z-index:1;
+  transition:border-color var(--dur-med), background var(--dur-med);
+}
+.t-node.-in::before{ border-color:var(--accent-2); background:var(--accent-2); }
+.t-node .yr{ font-family:var(--font-mono); font-size:13px; color:var(--accent-2); }
+.t-node .ti{ font-family:var(--font-display); font-weight:600; font-size:clamp(1.3rem,2.6vw,1.8rem); }
+.t-node .tx{ color:var(--muted); max-width:56ch; }
+.t-node .stack{ display:flex; gap:8px; flex-wrap:wrap; margin-top:4px; }
+.t-node .stack span{ font-family:var(--font-mono); font-size:11px; color:var(--subtle); }
+.t-node .stack span:not(:last-child)::after{ content:'·'; margin-left:8px; color:var(--border-2); }
+
+/* ============================================================
+   10. FEATURED PROJECT (case study chapters)
+   ============================================================ */
+.project-head{ display:grid; gap:16px; margin-bottom:10px; }
+.project-title{
+  font-family:var(--font-display); font-weight:700;
+  font-size:clamp(2.2rem,7vw,5.4rem); letter-spacing:-.02em; line-height:.95;
+}
+.project-sub{ font-family:var(--font-mono); color:var(--muted); font-size:14px; letter-spacing:.04em; }
+.project-links{ display:flex; gap:14px; margin-top:6px; }
+.project-stack{ display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
+.project-stack span{
+  font-family:var(--font-mono); font-size:11.5px; color:var(--accent-2);
+  border:1px solid var(--border-2); padding:6px 10px; border-radius:2px;
+}
+
+.chapters{ margin-top:60px; display:grid; gap:0; }
+.chapter{
+  display:grid; grid-template-columns:1fr; gap:14px;
+  border-top:1px solid var(--border);
+  padding:36px 0;
+}
+.chapter:last-child{ border-bottom:1px solid var(--border); }
+.chapter .ch-label{
+  font-family:var(--font-mono); font-size:11.5px; color:var(--subtle); text-transform:uppercase; letter-spacing:.12em;
+  display:flex; align-items:center; gap:10px;
+}
+.chapter .ch-label b{ color:var(--accent-2); font-weight:500; }
+.chapter p{ color:var(--muted); max-width:64ch; }
+.chapter.-in{ }
+@media(min-width:860px){
+  .chapter{ grid-template-columns:220px 1fr; gap:40px; }
+}
+
+.archive{ margin-top:96px; }
+.archive-list{ display:grid; }
+.arch-row{
+  border-top:1px solid var(--border);
+  padding:22px 0;
+  display:grid; grid-template-columns:36px 1fr auto; gap:18px; align-items:center;
+}
+.archive-list .arch-row:last-child{ border-bottom:1px solid var(--border); }
+.arch-row .num{ font-family:var(--font-mono); font-size:12px; color:var(--subtle); }
+.arch-row .name{ font-family:var(--font-display); font-weight:600; font-size:clamp(1.05rem,2.2vw,1.35rem); }
+.arch-row .desc{ color:var(--muted); font-size:.92rem; margin-top:2px; }
+.arch-row .arr{ color:var(--subtle); transition:transform var(--dur-fast) var(--ease), color var(--dur-fast); }
+.arch-row:hover .arr{ transform:translate(4px,-4px); color:var(--accent-2); }
+
+/* ============================================================
+   11. ENGINEERING PANEL
+   ============================================================ */
+.eng-panel{
+  border:1px solid var(--border); border-radius:6px; background:var(--surface);
+  overflow:hidden;
+}
+.eng-bar{
+  display:flex; align-items:center; gap:8px; padding:12px 18px; border-bottom:1px solid var(--border);
+  font-family:var(--font-mono); font-size:11px; color:var(--subtle);
+}
+.eng-bar span{ width:8px; height:8px; border-radius:50%; background:var(--border-2); }
+.eng-body{ padding:clamp(22px,4vw,40px); display:grid; gap:28px; }
+.eng-term{ font-family:var(--font-mono); font-size:clamp(.85rem,1.6vw,1rem); line-height:1.9; color:var(--muted); min-height:8.5em; }
+.eng-term .p{ color:var(--accent-2); }
+.eng-term .caret{ display:inline-block; width:.55em; height:1.1em; background:var(--accent-2); vertical-align:-2px; animation:blink 1s step-end infinite; }
+@keyframes blink{ 50%{ opacity:0; } }
+.eng-stats{ display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:20px; border-top:1px solid var(--border); padding-top:26px; }
+.eng-stats .k{ font-family:var(--font-mono); font-size:10.5px; color:var(--subtle); text-transform:uppercase; letter-spacing:.1em; }
+.eng-stats .v{ font-family:var(--font-display); font-size:1.6rem; font-weight:600; margin-top:6px; }
+.eng-stats .v.-ok{ color:var(--accent-2); }
+
+/* ============================================================
+   12. CONTACT
+   ============================================================ */
+.contact-title{
+  font-family:var(--font-display); font-weight:700;
+  font-size:clamp(2.6rem,8vw,6rem); line-height:.92; letter-spacing:-.02em;
+}
+.contact-sub{ color:var(--muted); max-width:52ch; margin-top:20px; font-size:1.05rem; }
+.contact-actions{ display:flex; gap:16px; flex-wrap:wrap; margin-top:38px; }
+.contact-links{ margin-top:64px; display:grid; grid-template-columns:1fr; }
+.c-link{
+  border-top:1px solid var(--border);
+  padding:20px 0; display:flex; align-items:center; justify-content:space-between; gap:14px;
+  font-family:var(--font-display); font-weight:600; font-size:clamp(1.1rem,2.6vw,1.5rem);
+}
+.contact-links .c-link:last-child{ border-bottom:1px solid var(--border); }
+.c-link .arr{ color:var(--subtle); transition:transform var(--dur-fast) var(--ease), color var(--dur-fast); }
+.c-link:hover .arr{ transform:translate(4px,-4px); color:var(--accent-2); }
+.c-link small{ font-family:var(--font-mono); font-size:11px; color:var(--subtle); font-weight:400; letter-spacing:.06em; }
+
+.support-card{
+  margin-top:56px; border:1px solid var(--border); border-radius:8px; padding:28px;
+  display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap;
+  background:linear-gradient(180deg, var(--accent-dim), transparent);
+}
+.support-card .st{ max-width:44ch; }
+.support-card .st .eyebrow{ margin-bottom:8px; }
+.support-card p{ color:var(--muted); font-size:.94rem; margin-top:6px; }
+
+/* ============================================================
+   13. FOOTER
+   ============================================================ */
+footer.site-footer{
+  border-top:1px solid var(--border);
+  padding:36px var(--edge);
+  display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  font-family:var(--font-mono); font-size:11.5px; color:var(--subtle); letter-spacing:.04em;
+}
+footer.site-footer a:hover{ color:var(--accent-2); }
+.to-top{ display:flex; align-items:center; gap:8px; }
+
+/* ============================================================
+   14. REVEAL UTILITY
+   ============================================================ */
+.reveal{ opacity:0; transform:translateY(22px); transition:opacity 700ms var(--ease), transform 700ms var(--ease); }
+.reveal.-in{ opacity:1; transform:translateY(0); }
+
+/* ============================================================
+   15. RESPONSIVE
+   ============================================================ */
+@media(max-width:760px){
+  .nav-links{ display:none; }
+  .nav-toggle{ display:flex; }
+  .section{ padding-left:var(--edge); padding-right:var(--edge); }
+  .about-facts{ grid-template-columns:repeat(2,1fr); }
+}
+@media(min-width:761px){
+  #mobile-menu, .nav-toggle{ display:none; }
+}
+@media(hover:none), (pointer:coarse){
+  #cursor{ display:none; }
+}
+
+/* ============================================================
+   16. REDUCED MOTION
+   ============================================================ */
+@media(prefers-reduced-motion:reduce){
+  html{ scroll-behavior:auto; }
+  *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
+  .about-statement .line span{ transform:none; }
+}
+body.reduced-motion .reveal{ opacity:1; transform:none; }
+body.reduced-motion .about-statement .line span{ transform:none; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ============ INTRO ============ -->
+<div id="intro" aria-hidden="true">
+  <div class="intro-mark">SHIJO<span>.</span>SITE</div>
+  <div class="intro-status" id="intro-status">01 — INITIALIZING</div>
+  <div class="intro-bar"><i id="intro-fill"></i></div>
+</div>
+
+<!-- ============ CURSOR ============ -->
+<div id="cursor" aria-hidden="true"></div>
+
+<!-- ============ NAV ============ -->
+<header class="nav" id="site-nav">
+  <a href="#top" class="nav-brand"><span class="dot"></span>SHIJO.SITE</a>
+  <nav class="nav-links" aria-label="Primary">
+    <a href="#about" data-sec="about">About</a>
+    <a href="#skills" data-sec="skills">Skills</a>
+    <a href="#journey" data-sec="journey">Journey</a>
+    <a href="#work" data-sec="work">Work</a>
+    <a href="#contact" data-sec="contact">Contact</a>
+  </nav>
+  <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
+    <span></span>
+  </button>
+</header>
+
+<nav id="mobile-menu" aria-label="Mobile" aria-hidden="true">
+  <button class="mm-close btn" id="mm-close" aria-label="Close menu">Close</button>
+  <a href="#about">About</a>
+  <a href="#skills">Skills</a>
+  <a href="#journey">Journey</a>
+  <a href="#work">Work</a>
+  <a href="#contact">Contact</a>
+</nav>
+
+<main id="main">
+  <div id="top"></div>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" aria-label="Introduction">
+    <canvas id="hero-canvas"></canvas>
+    <div class="hero-inner">
+      <div class="hero-meta">
+        <span class="eyebrow">PORTFOLIO — <b>2026</b></span>
+        <span class="eyebrow">B.TECH CSE</span>
+        <span class="eyebrow">INDIA</span>
+      </div>
+      <h1 class="hero-name">SHIJO</h1>
+      <p class="hero-role">Software engineer building <b>AI / ML</b> systems<span class="sep">·</span><b>full‑stack</b> products<span class="sep">·</span> and the interfaces that hold them together.</p>
+      <div class="hero-foot">
+        <a href="#work" class="btn -solid" data-magnetic data-cursor="link">View selected work</a>
+        <div class="scroll-cue"><i></i>SCROLL</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ABOUT ============ -->
+  <section class="section" id="about" aria-label="About">
+    <div class="section-head">
+      <span class="eyebrow">About</span>
+      <span class="eyebrow mono">— 01</span>
+    </div>
+    <div class="about-grid">
+      <h2 class="about-statement reveal" id="about-statement">
+        <span class="line"><span>I BUILD SYSTEMS</span></span>
+        <span class="line"><span>THAT FEEL</span></span>
+        <span class="line"><span>SIMPLE.</span></span>
+      </h2>
+      <div>
+        <div class="about-body reveal">
+          <p>Shijo is a Computer Science Engineering student and software engineer working across AI/ML and full‑stack development — from training and serving a model to the interface someone actually touches.</p>
+          <p>Most of the work lives at that seam: systems that need to be technically sound and still simple to use, whether that's a finance tool, a small product, or the site you're reading this on.</p>
+        </div>
+        <div class="about-facts reveal">
+          <div><div class="v">AI / ML</div><div class="k">Focus area</div></div>
+          <div><div class="v">Full‑Stack</div><div class="k">Focus area</div></div>
+          <div><div class="v">India</div><div class="k">Based in</div></div>
+          <div><div class="v">B.Tech CSE</div><div class="k">Education</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SKILLS ============ -->
+  <section class="section" id="skills" aria-label="Skills">
+    <div class="section-head">
+      <span class="eyebrow">Capabilities</span>
+      <span class="eyebrow mono">— 02</span>
+    </div>
+    <div class="skills-grid" id="skills-grid"><!-- injected --></div>
+  </section>
+
+  <!-- ============ JOURNEY ============ -->
+  <section class="section" id="journey" aria-label="Journey">
+    <div class="section-head">
+      <span class="eyebrow">Journey</span>
+      <span class="eyebrow mono">— 03</span>
+    </div>
+    <div class="timeline" id="timeline">
+      <div class="timeline-track"><i id="timeline-fill"></i></div>
+      <div id="timeline-nodes"><!-- injected --></div>
+    </div>
+  </section>
+
+  <!-- ============ WORK ============ -->
+  <section class="section" id="work" aria-label="Selected work">
+    <div class="section-head">
+      <span class="eyebrow">Selected work</span>
+      <span class="eyebrow mono">— 04</span>
+    </div>
+
+    <article aria-label="Featured project">
+      <div class="project-head reveal">
+        <span class="eyebrow">Featured — <b>01</b></span>
+        <h3 class="project-title">LEDGR</h3>
+        <p class="project-sub">AI‑powered finance controller</p>
+        <div class="project-stack">
+          <span>Python</span><span>FastAPI</span><span>Machine Learning</span>
+        </div>
+        <div class="project-links">
+          <a class="btn" href="https://github.com/shijo-hex" target="_blank" rel="noopener" data-magnetic data-cursor="link">View on GitHub</a>
+        </div>
+      </div>
+
+      <div class="chapters" id="project-chapters">
+        <div class="chapter reveal">
+          <div class="ch-label"><b>01</b> Context</div>
+          <p>Personal finance is scattered across statements, apps and spreadsheets, and most tools only show what already happened rather than helping decide what to do next.</p>
+        </div>
+        <div class="chapter reveal">
+          <div class="ch-label"><b>02</b> Problem</div>
+          <p>Build something that reads real transaction data, understands it, and turns it into a controller a person can actually act on — not another dashboard to check and ignore.</p>
+        </div>
+        <div class="chapter reveal">
+          <div class="ch-label"><b>03</b> Architecture</div>
+          <p>A FastAPI backend handles ingestion and a machine‑learning layer for categorisation and forecasting; a lightweight client surfaces the results as clear, specific guidance instead of raw numbers.</p>
+        </div>
+        <div class="chapter reveal">
+          <div class="ch-label"><b>04</b> Implementation</div>
+          <p>Built in Python end to end — data pipeline, model, and API — with an emphasis on keeping the ML layer replaceable as the categorisation and forecasting approach improves.</p>
+        </div>
+        <div class="chapter reveal">
+          <div class="ch-label"><b>05</b> Result</div>
+          <p>A working finance controller that turns raw transactions into a running, understandable picture of where money is going — the seed of a system rather than a one‑off script.</p>
+        </div>
+      </div>
+    </article>
+
+    <div class="archive">
+      <div class="section-head" style="margin-bottom:8px; padding-bottom:14px;">
+        <span class="eyebrow">Archive</span>
+      </div>
+      <div class="archive-list" id="archive-list"><!-- injected --></div>
+    </div>
+  </section>
+
+  <!-- ============ ENGINEERING ============ -->
+  <section class="section" id="engineering" aria-label="Engineering">
+    <div class="section-head">
+      <span class="eyebrow">Engineering</span>
+      <span class="eyebrow mono">— 05</span>
+    </div>
+    <div class="eng-panel reveal">
+      <div class="eng-bar"><span></span><span></span><span></span>&nbsp;shijo@site — zsh</div>
+      <div class="eng-body">
+        <div class="eng-term" id="eng-term" aria-hidden="true"></div>
+        <div class="eng-stats">
+          <div><div class="k">Build</div><div class="v -ok">Online</div></div>
+          <div><div class="k">GitHub</div><div class="v -ok">Active</div></div>
+          <div><div class="k">Stack</div><div class="v">Py · TS · React</div></div>
+          <div><div class="k">Status</div><div class="v -ok">Shipping</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section class="section" id="contact" aria-label="Contact">
+    <h2 class="contact-title reveal">LET'S BUILD<br>SOMETHING.</h2>
+    <p class="contact-sub reveal">Have a project, an opportunity, or an interesting problem worth solving? I'd like to hear about it.</p>
+    <div class="contact-actions reveal">
+      <a class="btn -solid" href="mailto:hello@shijo.site" data-magnetic data-cursor="link">Get in touch</a>
+      <a class="btn" href="https://github.com/shijo-hex" target="_blank" rel="noopener" data-magnetic data-cursor="link">GitHub</a>
+    </div>
+
+    <div class="contact-links reveal">
+      <a class="c-link" href="mailto:hello@shijo.site" data-magnetic data-cursor="link">Email <small class="arr">↗</small></a>
+      <a class="c-link" href="https://github.com/shijo-hex" target="_blank" rel="noopener" data-magnetic data-cursor="link">GitHub <small class="arr">↗</small></a>
+      <a class="c-link" href="#" data-magnetic data-cursor="link">LinkedIn <small class="arr">↗</small></a>
+    </div>
+
+    <div class="support-card reveal">
+      <div class="st">
+        <div class="eyebrow">Support</div>
+        <p>If something here was useful, you can support the work directly via UPI — no ads, no sponsors.</p>
+      </div>
+      <a class="btn" href="./pay/" data-magnetic data-cursor="link">Support via UPI</a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <span>© <span id="year"></span> Shijo. Built from scratch.</span>
+  <a class="to-top" href="#top">Back to top ↑</a>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="./main.js"></script>
+</body>
+</html>
