@@ -2,7 +2,7 @@
 
 > A handcrafted, dark editorial portfolio for **Shijo Sylan**, focused on AI/ML, full-stack development, and product engineering.
 
-🌐 **Live:** https://shijo.site/  
+🌐 **Live:** https://shijo.me/  
 💻 **Source:** https://github.com/shijo-hex/shijo-site
 
 ---
