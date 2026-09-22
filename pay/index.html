@@ -43,13 +43,15 @@ input{ width:100%; margin-top:12px; padding:12px 13px; border:2px solid var(--in
 .upi-id{ margin:14px 0 6px; color:var(--c-blue); font-weight:700; font-size:13px; }
 .copy-button{ border:none; color:var(--muted); background:transparent; cursor:pointer; text-decoration:underline; font-weight:700; font-size:12.5px; }
 .note{ margin-top:18px; color:var(--muted); font-size:11.5px; line-height:1.6; font-weight:500; }
+.amount-error{ min-height:16px; margin:6px 2px 0; font-size:11.5px; font-weight:700; color:#c62828; }
+.pay-button[disabled]{ opacity:.5; cursor:not-allowed; box-shadow:none; transform:none; }
 .status{ min-height:18px; margin:10px 0 0; font-size:13px; color:var(--c-pink); font-weight:700; line-height:1.5; }
 .visually-hidden{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
 </style>
 </head>
 <body>
 <div class="container">
-  <a class="back" href="../">← Back to shijo.me</a>
+  <a class="back" href="../">← Back to shijo.site</a>
   <div class="eyebrow">Support — UPI</div>
   <h1>Support my work</h1>
   <p class="description">Buy me a chaya :p — works with any UPI app, no provider lock-in.</p>
@@ -62,7 +64,8 @@ input{ width:100%; margin-top:12px; padding:12px 13px; border:2px solid var(--in
         <button class="amount" data-amount="199" aria-pressed="false">₹199</button>
       </div>
       <label for="customAmount" class="visually-hidden">Custom amount in rupees</label>
-      <input id="customAmount" type="number" min="1" inputmode="decimal" placeholder="Or enter a custom amount">
+      <input id="customAmount" type="number" min="1" max="20000" step="0.01" inputmode="decimal" placeholder="Or enter a custom amount (max ₹20,000)">
+      <p class="amount-error" id="amountError" role="alert" aria-live="assertive"></p>
       <button class="pay-button" id="payButton" aria-describedby="payStatus">Pay ₹99 via UPI</button>
       <p class="status" id="payStatus" role="status" aria-live="polite"></p>
     </div>
@@ -81,10 +84,19 @@ input{ width:100%; margin-top:12px; padding:12px 13px; border:2px solid var(--in
 <script>
 const upiId = "shijosylan@oksbi";
 const payeeName = "Shijo";
-let selectedAmount = "99";
+const MAX_AMOUNT = 20000;
+const MIN_AMOUNT = 1;
+const DEFAULT_AMOUNT = "99";
+
+// Single source of truth for the active amount — previously a preset
+// button click set `selectedAmount` while typing set `customAmount.value`
+// independently, so clearing the custom field after typing silently fell
+// back to a stale preset that no longer looked selected in the UI.
+let activeAmount = DEFAULT_AMOUNT;
 
 const amountButtons = document.querySelectorAll(".amount");
 const customAmount = document.getElementById("customAmount");
+const amountError = document.getElementById("amountError");
 const payButton = document.getElementById("payButton");
 const qrCodeBox = document.getElementById("qrcode");
 const copyButton = document.getElementById("copyButton");
@@ -94,19 +106,39 @@ function isMobileDevice() {
   return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 }
 
-function createUpiLink() {
-  const amount = customAmount.value || selectedAmount;
+// Validates a raw amount string. Returns { value, error } — value is a
+// clean numeric string (max 2 decimals) or null if there's no valid
+// amount to send; error is a user-facing message or "".
+function validateAmount(raw) {
+  if (raw === "" || raw === null || raw === undefined) return { value: null, error: "" };
+  const n = Number(raw);
+  if (!Number.isFinite(n)) return { value: null, error: "Enter a valid number." };
+  if (n > MAX_AMOUNT) return { value: null, error: `Amount can't exceed ₹${MAX_AMOUNT.toLocaleString("en-IN")}.` };
+  // Round to paise (UPI's smallest unit) before the lower-bound check —
+  // otherwise a sub-paisa value like 0.001 passes n > 0 but rounds to
+  // "0.00", producing an invalid ₹0 payment request.
+  const rounded = Math.round(n * 100) / 100;
+  if (rounded < MIN_AMOUNT) return { value: null, error: `Amount must be at least ₹${MIN_AMOUNT}.` };
+  return { value: rounded.toFixed(2).replace(/\.00$/, ""), error: "" };
+}
+
+function createUpiLink(amount) {
   const params = new URLSearchParams({ pa: upiId, pn: payeeName, cu: "INR" });
-  if (amount && Number(amount) > 0) params.set("am", amount);
+  if (amount) params.set("am", amount);
   return "upi://pay?" + params.toString();
 }
 
 function updatePaymentDetails() {
-  const amount = customAmount.value || selectedAmount;
-  payButton.textContent = amount && Number(amount) > 0 ? `Pay ₹${amount} via UPI` : "Pay via UPI";
+  const { value: amount, error } = validateAmount(activeAmount);
+  amountError.textContent = error;
+  payButton.disabled = !!error;
+
+  payButton.textContent = amount ? `Pay ₹${amount} via UPI` : "Pay via UPI";
   qrCodeBox.innerHTML = "";
+  // Never encode an amount that failed validation — display, QR payload,
+  // and the pay button must always agree on the same value.
   new QRCode(qrCodeBox, {
-    text: createUpiLink(),
+    text: createUpiLink(error ? null : amount),
     width: 168,
     height: 168,
     colorDark: "#0b0b10",
@@ -116,7 +148,7 @@ function updatePaymentDetails() {
 
 amountButtons.forEach(button => {
   button.addEventListener("click", () => {
-    selectedAmount = button.dataset.amount;
+    activeAmount = button.dataset.amount;
     customAmount.value = "";
     amountButtons.forEach(item => { item.classList.remove("selected"); item.setAttribute("aria-pressed", "false"); });
     button.classList.add("selected");
@@ -127,17 +159,23 @@ amountButtons.forEach(button => {
 
 customAmount.addEventListener("input", () => {
   amountButtons.forEach(item => { item.classList.remove("selected"); item.setAttribute("aria-pressed", "false"); });
+  // An empty custom field means "no amount chosen" — fall back to the
+  // default rather than silently reusing whatever was active before.
+  activeAmount = customAmount.value !== "" ? customAmount.value : DEFAULT_AMOUNT;
   updatePaymentDetails();
 });
 
 payButton.addEventListener("click", () => {
+  const { value: amount, error } = validateAmount(activeAmount);
+  if (error) { amountError.textContent = error; customAmount.focus(); return; }
+
   if (!isMobileDevice()) {
     payStatus.textContent = "No UPI app on this device — scan the QR code below with your phone instead.";
     document.getElementById("qrcode").scrollIntoView({ behavior: "smooth", block: "center" });
     return;
   }
   payStatus.textContent = "Opening your UPI app…";
-  window.location.href = createUpiLink();
+  window.location.href = createUpiLink(amount);
   setTimeout(() => {
     if (document.hasFocus()) {
       payStatus.textContent = "Couldn't open a UPI app. Scan the QR code below, or copy the UPI ID.";
@@ -147,6 +185,7 @@ payButton.addEventListener("click", () => {
 
 copyButton.addEventListener("click", async () => {
   try {
+    if (!navigator.clipboard) throw new Error("Clipboard API unavailable");
     await navigator.clipboard.writeText(upiId);
     copyButton.textContent = "UPI ID copied!";
   } catch (err) {
