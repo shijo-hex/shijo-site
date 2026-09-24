@@ -1,255 +1,610 @@
-# Shijo Sylan — Portfolio
+# Shijo Sylan — Personal Portfolio
 
-> A handcrafted, dark editorial portfolio for **Shijo Sylan**, focused on AI/ML, full-stack development, and product engineering.
+> A handcrafted software-engineering portfolio built from scratch with HTML, CSS, and vanilla JavaScript — with interactive motion, 3D visuals, and a lightweight personal UPI checkout experience.
 
 🌐 **Live:** https://shijo.me/  
-💻 **Source:** https://github.com/shijo-hex/shijo-site
+💻 **GitHub:** https://github.com/shijo-hex/shijo-site
 
 ---
 
-## ✦ Overview
+## ✦ About
 
-**shijo.site** is my personal portfolio and engineering playground.
+**shijo.me** is my personal portfolio, engineering playground, and ongoing experiment in building polished web experiences without hiding everything behind a framework.
 
-The site is intentionally built without a framework or build step. Instead of relying on a large component library, it uses semantic HTML, custom CSS, and vanilla JavaScript to keep the experience lightweight, fast, and easy to understand.
+The project is intentionally lightweight:
 
-The goal is simple:
+- No React
+- No Next.js
+- No build pipeline
+- No application server
+- No database
+- No component library
 
-**show the work, show the thinking, and make the interaction memorable.**
-
----
-
-## ⚡ Highlights
-
-- Editorial dark-mode visual system
-- Responsive layout for desktop, tablet, and mobile
-- Intro/loading experience with session persistence
-- Custom cursor and magnetic interactions on pointer devices
-- Scroll-based section reveals using `IntersectionObserver`
-- Animated skills matrix with keyboard support
-- Interactive engineering / terminal section
-- Timeline documenting the evolution from CS foundations to AI + systems work
-- Three.js particle / wireframe hero backdrop
-- GSAP-driven hero scroll animation
-- `prefers-reduced-motion` support
-- Accessible focus states and keyboard interactions
-- SEO and social metadata
-- Dedicated universal UPI payment page
-- Mobile UPI deep linking + desktop QR flow
-- No application server or database required
-
----
-
-## 🧠 What the Site Represents
-
-The portfolio is structured around a few areas of work:
-
-| Area | Focus |
-| --- | --- |
-| AI / ML | Machine learning, generative AI, NLP, data-driven systems |
-| Full Stack | React, TypeScript, Node.js, APIs, frontend engineering |
-| Backend | FastAPI, Python, data + service-oriented systems |
-| Engineering | Git, GitHub, Docker, product development |
-| Product | Building useful software end-to-end |
-
----
-
-## 🛠 Tech Stack
-
-### Frontend
-
-- HTML5
-- CSS3
-- Vanilla JavaScript
-- Responsive CSS
-- CSS custom properties
-
-### Interaction & Motion
-
-- **GSAP** — scroll-driven hero animation
-- **Three.js** — procedural 3D particle / wireframe backdrop
-- **IntersectionObserver** — reveal, timeline, and terminal interactions
-- CSS transitions and keyframes
-
-### Typography
-
-- Space Grotesk
-- Inter
-- JetBrains Mono
-
-### Payments
-
-- Standard `upi://pay` deep links
-- Dynamic UPI QR generation
-- Clipboard API
-
----
-
-## 🎬 Interaction Design
-
-A major part of the project is making the portfolio feel like an interface rather than a static résumé.
-
-### Hero
-
-The opening section combines typography, metadata, motion, and a lightweight Three.js visual field. As the page scrolls, the hero content and 3D backdrop respond to the scroll position.
-
-### Cursor
-
-On desktop / fine-pointer devices, the site uses a custom cursor that expands over interactive elements and can display contextual UI such as `VIEW`.
-
-### Magnetic Interactions
-
-Selected links use a small pointer-following transform to give buttons and archive items a tactile feel without adding heavy libraries.
-
-### Scroll Reveals
-
-Sections progressively enter the viewport using `IntersectionObserver`, keeping the animation model simple and avoiding a large animation runtime for basic reveals.
-
-### Terminal
-
-The engineering section presents a small command-line style interface and types its output when it enters the viewport.
-
----
-
-## 💳 Universal UPI Support
-
-The project includes a dedicated payment experience at:
-
-**https://shijo.site/pay/**
-
-It uses a standard UPI URI rather than locking the experience to a specific provider.
-
-### Payment Flow
-
-**Mobile**
-
-1. Choose an amount.
-2. Tap **Pay via UPI**.
-3. The browser attempts to open a compatible installed UPI app.
-
-**Desktop**
-
-1. Choose an amount.
-2. Scan the generated QR code using a UPI app on your phone.
-
-The page also exposes the UPI ID directly with a copy action.
-
-> UPI ID: `shijosylan@oksbi`
-
----
-
-## 📁 Project Structure
+Instead, the core experience is built with:
 
 ```text
-shijo-site/
-├── index.html          # Main portfolio page
-├── main.js             # Site content + interactions + animation logic
-├── pay/
-│   └── index.html      # Universal UPI payment page
-└── README.md
+HTML
+CSS
+Vanilla JavaScript
+Three.js
+GSAP
+Browser APIs
 ```
 
-One deliberate design choice is keeping portfolio content in a single `SITE_DATA` object near the top of `main.js`.
-
-This makes common content updates possible without touching the page markup.
-
----
-
-## 🚀 Run Locally
-
-Because the project is currently a static site with no build step, you can run it with any simple local HTTP server.
-
-### Using Python
-
-```bash
-git clone https://github.com/shijo-hex/shijo-site.git
-cd shijo-site
-python -m http.server 8000
-```
-
-Then open:
-
-```text
-http://localhost:8000
-```
-
-> Using a local HTTP server is recommended instead of opening `index.html` directly so browser APIs and relative paths behave consistently.
-
----
-
-## ✏️ Updating Content
-
-Most portfolio content lives in the `SITE_DATA` object near the top of `main.js`.
-
-You can update:
-
-- Skills
-- Timeline / journey
-- Project archive
-- Terminal output
-
-without rewriting the rendering or interaction logic.
-
----
-
-## ♿ Accessibility & Performance
-
-The project intentionally includes several graceful-degradation paths:
-
-- Respects `prefers-reduced-motion`
-- Disables motion-heavy effects for reduced-motion users
-- Avoids the custom cursor on touch / coarse-pointer devices
-- Provides visible `focus-visible` states
-- Supports keyboard interaction for expandable skill rows
-- Uses semantic links and buttons
-- Handles lower-power / smaller-screen Three.js rendering with fewer particles
-- Pauses the Three.js animation when the page is not visible
-- Uses responsive sizing rather than fixed desktop-only layouts
-
----
-
-## 📈 Direction
-
-This repository is also an evolving experiment.
-
-Planned improvements include:
-
-- richer case-study pages
-- deeper project storytelling
-- more refined page transitions
-- stronger accessibility coverage
-- performance profiling and asset optimization
-- a more componentized architecture as the site grows
-
-The visual direction may evolve, but the principle stays the same:
+The idea is simple:
 
 > **Less framework. More craft.**
 
 ---
 
-## 👤 About Me
+## ⚡ What Makes It Different
+
+This isn't intended to be a static résumé placed inside a webpage.
+
+The site experiments with:
+
+- editorial visual design
+- interactive motion
+- procedural 3D graphics
+- scroll-driven storytelling
+- custom cursor interactions
+- keyboard-accessible interactions
+- responsive layouts
+- browser-native APIs
+- a lightweight direct-UPI checkout experience
+
+The repository is intentionally public so the implementation itself can be explored:
+
+**→ https://github.com/shijo-hex/shijo-site**
+
+---
+
+## 🧩 Features
+
+### Portfolio Experience
+
+- Responsive portfolio layout
+- Editorial / brutalist-inspired visual system
+- Dark-mode interface
+- Animated hero section
+- Procedural Three.js background
+- GSAP scroll interactions
+- Scroll-triggered reveals
+- Interactive skills matrix
+- Engineering / terminal interface
+- Project archive
+- Timeline / career journey
+- Responsive navigation
+- Custom pointer interactions
+- Magnetic interactions on pointer devices
+
+### Browser & UX Engineering
+
+- `IntersectionObserver`-based reveals
+- `prefers-reduced-motion` support
+- `visibilitychange` handling
+- Responsive viewport behavior
+- Safe-area support
+- Keyboard interaction
+- `focus-visible` states
+- Touch-aware interaction behavior
+- Clipboard API integration
+- Graceful degradation when advanced effects aren't available
+
+---
+
+# 💳 Personal UPI Checkout
+
+One of the experiments in the portfolio is a small **personal UPI checkout layer**.
+
+Payment page:
+
+**https://shijo.me/pay/**
+
+Source:
+
+**https://github.com/shijo-hex/shijo-site/tree/main/pay**
+
+This is **not a payment gateway** and is deliberately not designed as one.
+
+The project uses a normal personal UPI ID:
+
+```text
+shijosylan@oksbi
+```
+
+The goal is to explore how far a polished payment experience can be built using browser-native capabilities without introducing an enterprise payment stack.
+
+---
+
+## UPI Architecture
+
+```text
+                    SHIJO.ME
+                       │
+                       ▼
+                SUPPORT MY WORK
+                       │
+                       ▼
+              PERSONAL CHECKOUT
+                       │
+             ┌─────────┴─────────┐
+             │                   │
+          MOBILE               DESKTOP
+             │                   │
+        UPI Intent               QR
+             │                   │
+             ▼                   ▼
+          UPI App             Scan QR
+             │                   │
+             └─────────┬─────────┘
+                       ▼
+                shijosylan@oksbi
+```
+
+The checkout supports:
+
+- preset amounts
+- custom amounts
+- dynamic UPI payment links
+- dynamically generated QR codes
+- mobile UPI app launching
+- desktop QR fallback
+- copy-to-clipboard UPI ID
+- payment-state messaging
+- mobile fallback handling
+
+---
+
+## Why Not a Payment Gateway?
+
+This project intentionally doesn't try to become Razorpay.
+
+There is no:
+
+- payment aggregator
+- merchant dashboard
+- payment gateway backend
+- API key management
+- payment database
+- card processing
+- payment settlement system
+- server-side payment verification
+
+The website simply creates a standard UPI payment request and hands the user over to their UPI app.
+
+That makes the payment feature appropriate for a **personal portfolio / prototype**, while keeping the implementation small enough to understand completely.
+
+---
+
+## Payment Flow
+
+### Mobile
+
+```text
+Select amount
+     ↓
+Pay via UPI
+     ↓
+upi://pay
+     ↓
+Installed UPI application
+     ↓
+User completes payment
+```
+
+### Desktop
+
+```text
+Select amount
+     ↓
+QR generated
+     ↓
+Scan with phone
+     ↓
+UPI application
+     ↓
+User completes payment
+```
+
+The QR and mobile payment request are generated from the same canonical UPI payment URI.
+
+---
+
+## Important Payment Limitation
+
+The website **does not independently verify UPI transactions**.
+
+Opening a UPI app does not mean that a payment succeeded.
+
+Therefore the frontend never treats:
+
+```text
+UPI app opened
+```
+
+as:
+
+```text
+Payment verified
+```
+
+Actual payment verification would require integration with an appropriate payment-processing/acquiring system.
+
+This distinction is intentional.
+
+---
+
+# 🛠 Technology
+
+## Core
+
+- HTML5
+- CSS3
+- Vanilla JavaScript
+
+## Graphics & Motion
+
+- **Three.js** — procedural 3D visual background
+- **GSAP** — scroll-driven animation
+- **IntersectionObserver** — viewport-triggered interactions
+- CSS transitions / keyframes
+
+## Browser APIs
+
+- Clipboard API
+- `IntersectionObserver`
+- `ResizeObserver`
+- `visibilitychange`
+- `matchMedia`
+- `prefers-reduced-motion`
+
+## Payment
+
+- UPI URI scheme
+- Dynamic UPI QR generation
+- Clipboard API
+- Mobile deep linking
+
+## Typography
+
+- Archivo Black
+- DM Sans
+- JetBrains Mono
+
+---
+
+# 📁 Project Structure
+
+```text
+shijo-site/
+│
+├── index.html
+│   └── Main portfolio experience
+│
+├── main.js
+│   └── Site data, interactions, animation and UI logic
+│
+├── pay/
+│   └── index.html
+│       └── Personal UPI checkout
+│
+└── README.md
+```
+
+Repository:
+
+**https://github.com/shijo-hex/shijo-site**
+
+---
+
+# 🧠 Engineering Principles
+
+The project follows a few simple principles.
+
+### 1. Use the platform first
+
+Before adding another dependency, check whether the browser already provides the required capability.
+
+Examples:
+
+```text
+IntersectionObserver
+Clipboard API
+matchMedia
+visibilitychange
+native links
+CSS media queries
+```
+
+---
+
+### 2. Keep the architecture understandable
+
+The project deliberately avoids unnecessary abstraction.
+
+A developer should be able to open the repository and understand how the site works without navigating through dozens of components.
+
+---
+
+### 3. Progressive enhancement
+
+Advanced effects should enhance the website, not define whether it works.
+
+If:
+
+```text
+Three.js fails
+```
+
+the portfolio should still function.
+
+If:
+
+```text
+clipboard isn't available
+```
+
+the UPI ID should still be visible.
+
+If:
+
+```text
+UPI Intent doesn't work
+```
+
+the QR fallback should remain available.
+
+---
+
+### 4. Don't fake capabilities
+
+The payment page does not pretend to know whether a UPI transaction succeeded.
+
+The website knows:
+
+```text
+payment request created
+```
+
+and:
+
+```text
+UPI app launched
+```
+
+but without trusted transaction verification it cannot honestly claim:
+
+```text
+money received
+```
+
+That boundary is intentionally respected.
+
+---
+
+# 📱 Mobile-First Payment UX
+
+The payment page is designed around a simple fallback hierarchy:
+
+```text
+1. UPI Intent
+       ↓
+2. QR
+       ↓
+3. Copy UPI ID
+```
+
+This means the payment experience remains useful even when:
+
+- the preferred UPI app isn't installed
+- browser Intent handling doesn't work
+- the user is on desktop
+- the QR library fails
+- clipboard access is unavailable
+
+---
+
+# ♿ Accessibility
+
+Accessibility is treated as part of the implementation rather than an afterthought.
+
+The site includes:
+
+- semantic HTML
+- keyboard navigation
+- visible focus states
+- `focus-visible`
+- accessible labels
+- `aria-live` status updates
+- `aria-pressed` amount controls
+- reduced-motion support
+- touch-aware interactions
+- readable mobile typography
+
+Motion-heavy effects are reduced or disabled when users request reduced motion.
+
+---
+
+# ⚡ Performance
+
+The project intentionally avoids a large application runtime.
+
+Performance considerations include:
+
+- no framework runtime
+- no build process
+- limited dependencies
+- responsive rendering
+- reduced particle counts on smaller screens
+- pausing Three.js when the page is not visible
+- avoiding unnecessary animation on touch devices
+- progressive enhancement
+
+The goal isn't to eliminate every dependency.
+
+The goal is to make every dependency worth having.
+
+---
+
+# 🚀 Run Locally
+
+Clone the repository:
+
+```bash
+git clone https://github.com/shijo-hex/shijo-site.git
+cd shijo-site
+```
+
+Start a local HTTP server:
+
+```bash
+python -m http.server 8000
+```
+
+Open:
+
+```text
+http://localhost:8000
+```
+
+Using an HTTP server is recommended instead of opening `index.html` directly because some browser APIs and relative paths behave differently under `file://`.
+
+---
+
+# ✏️ Editing the Portfolio
+
+Most portfolio content is organized inside the site's JavaScript data structures.
+
+Typical content includes:
+
+- skills
+- projects
+- timeline
+- engineering interests
+- terminal content
+- profile information
+
+The visual and interaction logic can remain unchanged while content is updated.
+
+---
+
+# 🔬 Why This Repository Exists
+
+This repository is more than the source code for a portfolio.
+
+It is an ongoing experiment in:
+
+```text
+Design
+   +
+Frontend Engineering
+   +
+Browser APIs
+   +
+Motion
+   +
+Performance
+   +
+UX
+```
+
+The payment page extends that experiment into another area:
+
+```text
+Web UX
+   +
+UPI deep linking
+   +
+QR fallback
+   +
+Mobile browser behavior
+```
+
+The interesting part isn't the number of technologies used.
+
+It's understanding **where each technology is actually useful**.
+
+---
+
+# 🧭 Roadmap
+
+Possible future improvements:
+
+- richer project case studies
+- interactive project demos
+- improved mobile navigation
+- deeper performance profiling
+- local QR generation without a CDN dependency
+- more robust UPI Intent diagnostics
+- improved payment fallback UX
+- accessibility audits
+- asset optimization
+- additional browser compatibility testing
+
+The project will remain intentionally lightweight unless the problem being solved genuinely requires a more complex architecture.
+
+---
+
+# 👨‍💻 About Me
 
 I'm **Shijo Sylan**, a B.Tech Computer Science student and software developer interested in:
 
 - AI / ML
-- Full-stack engineering
-- Backend systems
-- Developer tools
-- Product-focused software
+- full-stack engineering
+- backend systems
+- developer tools
+- product engineering
+- interactive web experiences
 
-I'm especially interested in turning ideas into working systems rather than stopping at prototypes.
+I enjoy taking ideas from:
+
+```text
+"Wouldn't it be cool if..."
+```
+
+to:
+
+```text
+"Here, it actually works."
+```
 
 ---
 
-## 🔗 Connect
+# 🔗 Links
 
-- Website: https://shijo.me/
-- GitHub: https://github.com/shijo-hex
+### Portfolio
+
+https://shijo.me/
+
+### Source Code
+
+https://github.com/shijo-hex/shijo-site
+
+### GitHub
+
+https://github.com/shijo-hex
+
+### Payment Prototype
+
+https://shijo.me/pay/
 
 ---
 
-## 📄 License
+# 📄 License
 
-This project is a personal portfolio website.
+This repository is a personal portfolio project.
 
-The source is public for learning and reference, but the personal branding, content, assets, and identity represented here are not intended to be reused as-is.
+The source code is publicly available for learning and reference. Personal branding, identity, content, artwork, and portfolio materials are not intended to be reused as-is.
+
+---
+
+<div align="center">
+
+**Built from scratch by Shijo Sylan.**
+
+`HTML` · `CSS` · `JavaScript` · `Three.js` · `GSAP` · `UPI`
+
+**Less framework. More craft.**
+
+</div>
