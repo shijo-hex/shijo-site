@@ -243,7 +243,7 @@ I'm especially interested in turning ideas into working systems rather than stop
 
 ## 🔗 Connect
 
-- Website: https://shijo.site/
+- Website: https://shijo.me/
 - GitHub: https://github.com/shijo-hex
 
 ---
