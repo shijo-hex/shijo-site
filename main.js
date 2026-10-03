@@ -18,6 +18,7 @@
       { year: "2027", title: "What's next", text: "Deeper AI/ML work, larger systems, and new collaborations.", stack: [], badge: true }
     ],
     archive: [
+      { name: "madi.me", desc: "An animated task-adventure — complete one challenge to unlock the next.", url: "./madi/madi.html", local: true },
       { name: "shijo-site", desc: "This site — a from-scratch, dependency-light personal site with a universal UPI payment flow.", url: "https://github.com/shijo-hex/shijo-site" },
       { name: "More on GitHub", desc: "Additional projects and experiments live on the profile below.", url: "https://github.com/shijo-hex" }
     ]
@@ -305,7 +306,8 @@
     SITE_DATA.archive.forEach(function (p, i) {
       var a = document.createElement("a");
       a.className = "arch-row";
-      a.href = p.url; a.target = "_blank"; a.rel = "noopener";
+      a.href = p.url;
+      if (!p.local) { a.target = "_blank"; a.rel = "noopener"; }
       a.innerHTML =
         '<span class="num mono">' + String(i + 1).padStart(2, "0") + "</span>" +
         '<span><span class="name">' + p.name + '</span><div class="desc">' + p.desc + "</div></span>" +
