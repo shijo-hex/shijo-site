@@ -1,0 +1,1051 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>madi.me — small tasks, tiny victories</title>
+<meta name="description" content="A tiny animated task-adventure. Help your little world move forward, one small task at a time.">
+<meta name="theme-color" content="#F6EFE4">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
+:root{
+  --paper:   #F6EFE4;   /* warm cream page */
+  --panel:   #FFFBF3;   /* lighter card surface */
+  --ink:     #2E2A26;   /* soft near-black brown — never pure black */
+  --ink-60:  rgba(46,42,38,.62);
+  --ink-35:  rgba(46,42,38,.35);
+  --ink-14:  rgba(46,42,38,.14);
+  --peach:   #F2A874;   /* bedroom / warmth */
+  --blue:    #7FB3C7;   /* kitchen / water */
+  --sage:    #8FAE7E;   /* desk / outdoors */
+  --rose:    #E08A8A;   /* accent / celebration */
+  --amber:   #E8B64C;   /* sun / evening */
+
+  --radius-lg: 28px;
+  --radius-md: 18px;
+  --radius-sm: 10px;
+  --space-1: 6px;  --space-2: 10px; --space-3: 16px;
+  --space-4: 24px; --space-5: 36px; --space-6: 52px;
+
+  --font-display: 'Fredoka', 'Segoe UI Rounded', sans-serif;
+  --font-body:    'Figtree', -apple-system, sans-serif;
+
+  --dur-1: 160ms; --dur-2: 320ms; --dur-3: 560ms;
+  --ease: cubic-bezier(.3,.9,.4,1);
+  --ease-bounce: cubic-bezier(.34,1.56,.64,1);
+}
+
+*,*::before,*::after{ box-sizing:border-box; }
+html{ background:var(--paper); }
+body{
+  margin:0; min-height:100vh; min-height:100svh;
+  background:var(--paper); color:var(--ink);
+  font-family:var(--font-body);
+  padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px);
+  overflow-x:hidden;
+}
+h1,h2{ font-family:var(--font-display); font-weight:600; margin:0; }
+p{ margin:0; }
+button{ font-family:var(--font-body); }
+:focus-visible{ outline:3px solid var(--rose); outline-offset:3px; border-radius:6px; }
+.visually-hidden{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+
+/* reduced motion: strip nonessential movement, keep functional feedback */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; scroll-behavior:auto !important; }
+}
+body.reduced-motion *,body.reduced-motion *::before,body.reduced-motion *::after{
+  animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important;
+}
+
+/* ============================================================
+   LAYOUT SHELL
+   ============================================================ */
+#app{ min-height:100svh; display:flex; flex-direction:column; }
+.scene{ flex:1; display:flex; }
+.scene[hidden]{ display:none; }
+
+.wordmark{ font-family:var(--font-display); font-weight:700; font-size:1.3rem; letter-spacing:-.01em; }
+.wordmark span{ color:var(--rose); }
+.wordmark.small{ font-size:1.05rem; }
+
+.btn-primary{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:14px 28px; min-height:48px; border-radius:999px;
+  border:2px solid var(--ink); background:var(--rose); color:var(--ink);
+  font-family:var(--font-display); font-weight:600; font-size:1rem;
+  cursor:pointer; box-shadow:0 4px 0 var(--ink);
+  transition:transform var(--dur-1) var(--ease), box-shadow var(--dur-1) var(--ease), background var(--dur-1) var(--ease);
+}
+.btn-primary:hover{ background:#e9a0a0; }
+.btn-primary:active{ transform:translateY(3px); box-shadow:0 1px 0 var(--ink); }
+.btn-primary:disabled{ opacity:.45; cursor:not-allowed; box-shadow:none; transform:none; }
+
+.btn-ghost{
+  display:inline-flex; align-items:center; justify-content:center; gap:6px;
+  min-height:44px; padding:10px 18px; border-radius:999px;
+  border:2px solid var(--ink-35); background:transparent; color:var(--ink);
+  font-weight:600; font-size:.88rem; cursor:pointer;
+  transition:background var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease);
+}
+.btn-ghost:hover{ background:var(--ink-14); border-color:var(--ink); }
+
+/* ============================================================
+   WELCOME SCENE
+   ============================================================ */
+#scene-welcome{ align-items:center; justify-content:center; padding:var(--space-4); }
+.welcome-card{ max-width:420px; width:100%; text-align:center; display:flex; flex-direction:column; align-items:center; gap:var(--space-3); }
+.welcome-card .wordmark{ font-size:2.4rem; }
+.tagline{ font-size:1rem; color:var(--ink-60); font-weight:600; }
+.welcome-art{ width:100%; max-width:280px; aspect-ratio:1/1; margin:var(--space-2) 0; }
+.welcome-art svg{ width:100%; height:100%; }
+.intro{ font-size:.95rem; color:var(--ink-60); max-width:30ch; }
+.stage-dots{ display:flex; gap:7px; margin-top:var(--space-2); }
+.stage-dots i{ width:7px; height:7px; border-radius:50%; background:var(--ink-35); display:block; }
+
+/* ============================================================
+   GAME SCENE
+   ============================================================ */
+#scene-game{ flex-direction:column; }
+.game-header{
+  display:flex; align-items:center; justify-content:space-between; gap:var(--space-3);
+  padding:var(--space-3) var(--space-4);
+  border-bottom:2px solid var(--ink-14);
+}
+.stage-indicator{ display:flex; align-items:center; gap:10px; }
+#stage-label{ font-size:.82rem; font-weight:600; color:var(--ink-60); white-space:nowrap; }
+.progress-track{ width:120px; height:8px; border-radius:99px; background:var(--ink-14); overflow:hidden; }
+.progress-fill{ height:100%; width:0%; background:var(--rose); border-radius:99px; transition:width var(--dur-3) var(--ease); }
+
+.game-body{ flex:1; display:flex; gap:var(--space-4); padding:var(--space-4); max-width:1100px; margin:0 auto; width:100%; }
+.world{
+  flex:1.3; min-height:320px; border-radius:var(--radius-lg); border:2px solid var(--ink);
+  position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center;
+  background:var(--panel); transition:background var(--dur-3) var(--ease);
+}
+.world svg{ width:100%; height:100%; }
+
+.task-panel{ flex:1; display:flex; flex-direction:column; gap:var(--space-2); min-width:0; }
+.task-panel h2{ font-size:1.3rem; }
+#task-instructions{ color:var(--ink-60); font-size:.92rem; }
+.task-interactive{ flex:1; display:flex; flex-direction:column; justify-content:center; gap:var(--space-3); min-height:160px; }
+.task-status{ min-height:20px; font-size:.85rem; font-weight:600; color:var(--sage); }
+.task-status.-error{ color:var(--rose); }
+
+.game-header{ min-width:0; }
+.game-header .wordmark{ flex-shrink:0; }
+.stage-indicator{ min-width:0; }
+#stage-label{ overflow:hidden; text-overflow:ellipsis; }
+
+@media (max-width:760px){
+  .game-body{ flex-direction:column; padding:var(--space-3); gap:var(--space-3); }
+  .world{ min-height:220px; }
+  .progress-track{ width:64px; }
+}
+@media (max-width:360px){
+  .game-header{ padding:var(--space-2) var(--space-3); gap:8px; }
+  .wordmark.small{ font-size:.9rem; }
+  #stage-label{ display:none; } /* progress bar + "Reset" remain; redundant text drops first */
+  .progress-track{ width:44px; }
+  .btn-ghost{ padding:8px 12px; font-size:.78rem; min-height:40px; }
+}
+
+/* ============================================================
+   TRANSITION OVERLAY
+   ============================================================ */
+.transition{
+  position:fixed; inset:0; z-index:50; display:flex; align-items:center; justify-content:center;
+  background:var(--paper); opacity:0; pointer-events:none;
+  transition:opacity var(--dur-2) var(--ease);
+}
+.transition.-show{ opacity:1; pointer-events:auto; }
+.transition p{
+  font-family:var(--font-display); font-weight:600; font-size:1.6rem; color:var(--ink);
+  transform:scale(.85); opacity:0; transition:transform var(--dur-3) var(--ease-bounce), opacity var(--dur-2) var(--ease);
+}
+.transition.-show p{ transform:scale(1); opacity:1; }
+
+/* ============================================================
+   ENDING SCENE
+   ============================================================ */
+#scene-ending{ align-items:center; justify-content:center; padding:var(--space-4); }
+.ending-card{ max-width:420px; width:100%; text-align:center; display:flex; flex-direction:column; align-items:center; gap:var(--space-2); }
+.ending-art{ width:100%; max-width:300px; aspect-ratio:1/1; }
+.ending-art svg{ width:100%; height:100%; }
+#scene-ending h1{ font-size:1.8rem; letter-spacing:.01em; }
+.ending-sub{ color:var(--ink-60); font-weight:600; }
+#ending-summary{ font-size:.85rem; color:var(--ink-35); margin:var(--space-1) 0 var(--space-2); }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ============ WELCOME ============ -->
+  <section id="scene-welcome" class="scene">
+    <div class="welcome-card">
+      <p class="wordmark">madi<span>.me</span></p>
+      <p class="tagline">Small tasks. Tiny victories.</p>
+      <div class="welcome-art" id="welcome-art"></div>
+      <p class="intro">Help your little world move forward.</p>
+      <button id="btn-start" class="btn-primary">Start the day</button>
+      <div class="stage-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+    </div>
+  </section>
+
+  <!-- ============ GAME ============ -->
+  <section id="scene-game" class="scene" hidden aria-hidden="true">
+    <header class="game-header">
+      <p class="wordmark small">madi<span>.me</span></p>
+      <div class="stage-indicator">
+        <span id="stage-label">Stage 1 of 5</span>
+        <div class="progress-track" role="progressbar" aria-label="Day progress" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0">
+          <div id="progress-fill" class="progress-fill"></div>
+        </div>
+      </div>
+      <button id="btn-reset" class="btn-ghost" aria-label="Reset progress">Reset</button>
+    </header>
+    <div class="game-body">
+      <div class="world" id="world" aria-hidden="true"></div>
+      <div class="task-panel">
+        <h2 id="task-title"></h2>
+        <p id="task-instructions"></p>
+        <div class="task-interactive" id="task-interactive"></div>
+        <p class="task-status" id="task-status" role="status" aria-live="polite"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TRANSITION ============ -->
+  <div class="transition" id="transition" hidden aria-hidden="true">
+    <p id="transition-text"></p>
+  </div>
+
+  <!-- ============ ENDING ============ -->
+  <section id="scene-ending" class="scene" hidden aria-hidden="true">
+    <div class="ending-card">
+      <div class="ending-art" id="ending-art"></div>
+      <h1>YOU MADE IT.</h1>
+      <p class="ending-sub">You showed up, one little step at a time.</p>
+      <p id="ending-summary"></p>
+      <button id="btn-again" class="btn-primary">Play again</button>
+    </div>
+  </section>
+
+</div>
+
+<style>
+/* ============================================================
+   TASK-SPECIFIC OBJECT STYLES (shared tactile language:
+   2px ink outline, soft radius, small offset shadow)
+   ============================================================ */
+.stage{ position:relative; width:100%; height:100%; min-height:260px; }
+.char-slot{ position:absolute; width:76px; height:76px; transition:transform var(--dur-3) var(--ease); }
+.char-slot svg{ width:100%; height:100%; display:block; }
+.char-slot.-bounce{ animation:charBounce 560ms var(--ease-bounce); }
+@keyframes charBounce{ 0%{transform:scale(1)} 35%{transform:scale(1.14,.88)} 65%{transform:scale(.94,1.08)} 100%{transform:scale(1)} }
+
+/* --- Level 1: bed --- */
+.bed-frame{ position:absolute; left:14%; right:14%; bottom:12%; top:38%; border:2px solid var(--ink); border-radius:var(--radius-md); background:#fff; }
+.bed-pillow{ position:absolute; left:8px; top:8px; width:28%; height:26px; background:var(--panel); border:2px solid var(--ink); border-radius:10px; }
+.bed-target{ position:absolute; left:8%; right:8%; bottom:10%; top:34%; border:2.5px dashed var(--ink-35); border-radius:10px; transition:border-color var(--dur-1) var(--ease), background var(--dur-1) var(--ease); }
+.bed-target.-near{ border-color:var(--rose); background:rgba(224,138,138,.1); }
+.blanket{
+  position:absolute; left:10%; top:6%; width:34%; height:60px; border-radius:12px;
+  background:repeating-linear-gradient(135deg, var(--peach), var(--peach) 10px, #eb9a5f 10px, #eb9a5f 20px);
+  border:2px solid var(--ink); cursor:grab; touch-action:none;
+  box-shadow:0 3px 0 var(--ink-35);
+  transition:transform var(--dur-2) var(--ease-bounce), box-shadow var(--dur-1) var(--ease);
+}
+.blanket.-dragging{ cursor:grabbing; box-shadow:0 10px 18px var(--ink-14); transition:none; z-index:5; }
+.blanket.-selected{ outline:3px solid var(--rose); outline-offset:3px; }
+.blanket.-placed{ cursor:default; }
+
+/* --- Level 2: water --- */
+.t-water{ display:flex; flex-direction:column; align-items:flex-start; gap:var(--space-3); }
+.glass{ width:64px; height:92px; border:2.5px solid var(--ink); border-top:none; border-radius:0 0 14px 14px; position:relative; overflow:hidden; background:#fff; }
+.water-fill{ position:absolute; left:0; right:0; bottom:0; height:0%; background:linear-gradient(180deg,#a9d6e3,var(--blue)); transition:height 80ms linear; }
+.water-fill::before{ content:""; position:absolute; top:0; left:0; right:0; height:4px; background:rgba(255,255,255,.55); }
+.fill-row{ display:flex; align-items:center; gap:var(--space-3); }
+.fill-progress-track{ width:140px; height:8px; border-radius:99px; background:var(--ink-14); overflow:hidden; }
+.fill-progress-fill{ height:100%; width:0%; background:var(--blue); border-radius:99px; transition:width 80ms linear; }
+
+/* --- Level 3: desk ---
+   Objects and targets are stacked in two non-overlapping flex rows
+   (not two absolutely-positioned layers) — an earlier absolute-inset
+   version let the object row physically overlap the target row at
+   typical panel heights, so a target could intercept clicks meant
+   for the object above it (or vice versa). */
+.desk-scene{ display:flex; flex-direction:column; width:100%; height:100%; padding:8% 6%; gap:6%; }
+.desk-targets{ display:flex; gap:4%; flex:1; min-height:0; }
+.desk-target{
+  flex:1; border:2.5px dashed var(--ink-35); border-radius:var(--radius-sm);
+  display:flex; align-items:flex-end; justify-content:center; padding-bottom:6px; position:relative;
+  font-size:.68rem; color:var(--ink-35); font-weight:600; text-align:center;
+  transition:border-color var(--dur-1) var(--ease), background var(--dur-1) var(--ease);
+}
+.desk-target.-near{ border-color:var(--sage); background:rgba(143,174,126,.12); }
+.desk-target.-filled{ border-style:solid; border-color:var(--sage); }
+.desk-objects{ display:flex; justify-content:space-around; align-items:center; flex:0 0 auto; }
+.desk-obj{
+  width:46px; height:46px; border:2px solid var(--ink); border-radius:12px; cursor:grab; touch-action:none;
+  display:flex; align-items:center; justify-content:center; background:var(--panel);
+  box-shadow:0 3px 0 var(--ink-35);
+  transition:transform var(--dur-2) var(--ease-bounce), box-shadow var(--dur-1) var(--ease), opacity var(--dur-2) var(--ease);
+}
+.desk-obj svg{ width:60%; height:60%; }
+.desk-obj.-dragging{ cursor:grabbing; box-shadow:0 10px 18px var(--ink-14); z-index:5; transition:none; }
+.desk-obj.-selected{ outline:3px solid var(--sage); outline-offset:3px; }
+.desk-obj.-placed{ cursor:default; }
+.desk-obj.-shake{ animation:objShake 420ms var(--ease); }
+@keyframes objShake{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-7px)} 75%{transform:translateX(7px)} }
+
+/* --- Level 4: focus --- */
+.t-focus{ display:flex; align-items:center; gap:var(--space-4); }
+.focus-ring{ width:108px; height:108px; flex-shrink:0; }
+.focus-ring circle{ fill:none; stroke-width:9; }
+.focus-ring .-track{ stroke:var(--ink-14); }
+.focus-ring .-fill{ stroke:var(--amber); stroke-linecap:round; transform:rotate(-90deg); transform-origin:50% 50%; transition:stroke-dashoffset 80ms linear; }
+.focus-time{ font-family:var(--font-display); font-size:1.5rem; }
+.focus-controls{ display:flex; gap:10px; margin-top:var(--space-2); }
+
+/* --- Level 5: walk --- */
+.t-walk{ display:flex; flex-direction:column; gap:var(--space-3); }
+.walk-path{ height:10px; border-radius:99px; background:var(--ink-14); position:relative; }
+.walk-path-fill{ position:absolute; left:0; top:0; bottom:0; width:0%; background:var(--sage); border-radius:99px; transition:width 60ms linear; }
+.walk-row{ display:flex; align-items:center; gap:var(--space-3); }
+.walk-hint{ font-size:.78rem; color:var(--ink-35); }
+
+/* world-stage walk path mirrors the task's progress */
+.stage .walk-track{ position:absolute; left:8%; right:8%; bottom:16%; height:3px; background:var(--ink-14); border-radius:99px; }
+.stage .walk-track-fill{ position:absolute; left:0; top:0; bottom:0; width:0%; background:var(--sage); border-radius:99px; transition:width 60ms linear; }
+.stage .exit-marker{ position:absolute; right:6%; bottom:10%; width:34px; height:46px; }
+</style>
+<script>
+(function(){ "use strict";
+
+/* ============================================================
+   0. SMALL UTILITIES
+   ============================================================ */
+var $ = function(sel, root){ return (root || document).querySelector(sel); };
+var clamp = function(v, min, max){ return Math.min(max, Math.max(min, v)); };
+var prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+if (prefersReducedMotion) document.body.classList.add("reduced-motion");
+
+function rectOverlapRatio(a, b) {
+  var x = Math.max(a.left, b.left);
+  var y = Math.max(a.top, b.top);
+  var r = Math.min(a.right, b.right);
+  var bEnd = Math.min(a.bottom, b.bottom);
+  if (r <= x || bEnd <= y) return 0;
+  var inter = (r - x) * (bEnd - y);
+  var smaller = Math.min(a.width * a.height, b.width * b.height);
+  return smaller > 0 ? inter / smaller : 0;
+}
+
+// Generic pointer-drag helper shared by Level 1 and Level 3.
+// Distinguishes a genuine drag from a tap (click-to-select pattern)
+// using a small movement threshold, and always restores pointer
+// capture / listener cleanup — this is the thing most drag
+// implementations get wrong and leave stuck in a half-dragged state.
+function makeDraggable(el, onEnd) {
+  var ox = 0, oy = 0, sx = 0, sy = 0, dragging = false, moved = false;
+  function down(e) {
+    if (el.classList.contains("-placed")) return;
+    dragging = true; moved = false;
+    sx = e.clientX; sy = e.clientY;
+    el.setPointerCapture(e.pointerId);
+    el.classList.add("-dragging");
+  }
+  function move(e) {
+    if (!dragging) return;
+    var dx = e.clientX - sx, dy = e.clientY - sy;
+    if (Math.abs(dx) > 5 || Math.abs(dy) > 5) moved = true;
+    ox = dx; oy = dy;
+    el.style.transform = "translate(" + dx + "px," + dy + "px)";
+  }
+  function up(e) {
+    if (!dragging) return;
+    dragging = false;
+    el.classList.remove("-dragging");
+    try { el.releasePointerCapture(e.pointerId); } catch (err) {}
+    onEnd({ dx: ox, dy: oy, moved: moved, el: el });
+  }
+  el.addEventListener("pointerdown", down);
+  el.addEventListener("pointermove", move);
+  el.addEventListener("pointerup", up);
+  el.addEventListener("pointercancel", up);
+  return function cleanup() {
+    el.removeEventListener("pointerdown", down);
+    el.removeEventListener("pointermove", move);
+    el.removeEventListener("pointerup", up);
+    el.removeEventListener("pointercancel", up);
+  };
+}
+
+/* ============================================================
+   1. CHARACTER — one reusable illustration, mouth/eyes swap by pose
+   ============================================================ */
+function characterSVG(pose) {
+  var mouths = {
+    idle:   "M40 56 Q48 62 56 56",
+    sleepy: "M42 58 Q48 58 54 58",
+    happy:  "M38 54 Q48 68 58 54",
+    sip:    "M45 56 a4 4 0 1 0 8 0 a4 4 0 1 0 -8 0",
+    focus:  "M41 57 L55 57",
+    walk:   "M40 55 Q48 63 56 55",
+    final:  "M36 52 Q48 70 60 52"
+  };
+  var eyesClosed = pose === "happy" || pose === "final";
+  var eyes = eyesClosed
+    ? '<path d="M36 44 Q40 40 44 44" stroke="#2E2A26" stroke-width="2.6" fill="none" stroke-linecap="round"/>' +
+      '<path d="M52 44 Q56 40 60 44" stroke="#2E2A26" stroke-width="2.6" fill="none" stroke-linecap="round"/>'
+    : '<circle cx="40" cy="43" r="3.2" fill="#2E2A26"/><circle cx="56" cy="43" r="3.2" fill="#2E2A26"/>';
+  var mouthD = mouths[pose] || mouths.idle;
+  var mouthFill = pose === "sip" ? "#2E2A26" : "none";
+  return (
+    '<svg viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">' +
+      '<ellipse cx="48" cy="66" rx="30" ry="24" fill="#E08A8A" stroke="#2E2A26" stroke-width="2.5"/>' +
+      '<circle cx="48" cy="40" r="26" fill="#FFF3E6" stroke="#2E2A26" stroke-width="2.5"/>' +
+      eyes +
+      '<path d="' + mouthD + '" stroke="#2E2A26" stroke-width="2.6" fill="' + mouthFill + '" stroke-linecap="round"/>' +
+    '</svg>'
+  );
+}
+
+function sunSVG(){
+  return '<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="11" fill="#E8B64C" stroke="#2E2A26" stroke-width="2"/></svg>';
+}
+function bookSVG(){
+  return '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2" fill="#F2A874" stroke="#2E2A26" stroke-width="2"/><line x1="12" y1="4" x2="12" y2="20" stroke="#2E2A26" stroke-width="1.6"/></svg>';
+}
+function cupSVG(){
+  return '<svg viewBox="0 0 24 24"><path d="M5 5 h14 l-2 14 a2 2 0 0 1-2 2 H9 a2 2 0 0 1-2-2 Z" fill="#7FB3C7" stroke="#2E2A26" stroke-width="2"/></svg>';
+}
+function phoneSVG(){
+  return '<svg viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="3" fill="#8FAE7E" stroke="#2E2A26" stroke-width="2"/><line x1="10" y1="19" x2="14" y2="19" stroke="#2E2A26" stroke-width="1.6"/></svg>';
+}
+function exitSVG(){
+  return '<svg viewBox="0 0 34 46" xmlns="http://www.w3.org/2000/svg"><path d="M4 46 V20 Q4 4 17 4 Q30 4 30 20 V46" fill="none" stroke="#2E2A26" stroke-width="2.5"/><circle cx="17" cy="14" r="6" fill="#E8B64C" stroke="#2E2A26" stroke-width="2"/></svg>';
+}
+
+$("#welcome-art").innerHTML = characterSVG("sleepy");
+$("#ending-art").innerHTML = characterSVG("final");
+
+/* ============================================================
+   2. TASK DEFINITIONS
+   Each task: { id, title, instructions, sceneHTML(), mount(ctx) }
+   mount(ctx) wires up interaction and returns a cleanup() fn.
+   ctx = { interactiveEl, statusEl, worldEl, complete(), setStatus() }
+   ============================================================ */
+var TASKS = [];
+
+/* ---------- Level 1 — Make the bed ---------- */
+TASKS.push({
+  id: "bed",
+  title: "Make the bed",
+  instructions: "Drag the blanket onto the bed. (Or: select the blanket, then select the bed.)",
+  sceneHTML: function(){
+    return (
+      '<div class="stage">' +
+        '<div class="char-slot" id="char" style="left:8%; bottom:4%;">' + characterSVG("sleepy") + '</div>' +
+        '<div class="bed-frame"><div class="bed-pillow"></div><div class="bed-target" id="bedTarget" tabindex="0" role="button" aria-label="Bed. Place the selected blanket here."></div></div>' +
+        '<div class="blanket" id="blanket" tabindex="0" role="button" aria-pressed="false" aria-label="Blanket. Press Enter to select, then press Enter on the bed to place it."></div>' +
+      '</div>'
+    );
+  },
+  mount: function(ctx){
+    var blanket = $("#blanket", ctx.worldEl);
+    var target = $("#bedTarget", ctx.worldEl);
+    var selected = false;
+    var cleanups = [];
+
+    function place(){
+      blanket.classList.remove("-selected");
+      blanket.classList.add("-placed");
+      blanket.setAttribute("aria-pressed", "false");
+      blanket.style.transform = "";
+      blanket.style.left = target.offsetLeft + 6 + "px";
+      blanket.style.top = target.offsetTop + 4 + "px";
+      blanket.style.width = target.offsetWidth - 12 + "px";
+      target.classList.remove("-near");
+      ctx.setStatus("Nice. Look at that bed.");
+      ctx.complete();
+    }
+    function snapBack(){
+      blanket.style.transition = "";
+      blanket.style.transform = "translate(0,0)";
+    }
+    function toggleSelect(){
+      if (blanket.classList.contains("-placed")) return;
+      selected = !selected;
+      blanket.classList.toggle("-selected", selected);
+      blanket.setAttribute("aria-pressed", String(selected));
+    }
+
+    var dragCleanup = makeDraggable(blanket, function(res){
+      if (blanket.classList.contains("-placed")) return;
+      if (!res.moved) { toggleSelect(); return; }
+      var ratio = rectOverlapRatio(blanket.getBoundingClientRect(), target.getBoundingClientRect());
+      if (ratio > 0.35) place(); else snapBack();
+    });
+    cleanups.push(dragCleanup);
+
+    function onBlanketKey(e){
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleSelect(); }
+    }
+    function onTargetActivate(e){
+      if (e.type === "keydown" && e.key !== "Enter" && e.key !== " ") return;
+      if (e.type === "keydown") e.preventDefault();
+      if (selected) place();
+    }
+    function onTargetHover(){ if (selected) target.classList.add("-near"); }
+    function onTargetLeave(){ target.classList.remove("-near"); }
+
+    blanket.addEventListener("keydown", onBlanketKey);
+    target.addEventListener("click", onTargetActivate);
+    target.addEventListener("keydown", onTargetActivate);
+    target.addEventListener("mouseenter", onTargetHover);
+    target.addEventListener("mouseleave", onTargetLeave);
+
+    return function cleanup(){
+      cleanups.forEach(function(fn){ fn(); });
+      blanket.removeEventListener("keydown", onBlanketKey);
+      target.removeEventListener("click", onTargetActivate);
+      target.removeEventListener("keydown", onTargetActivate);
+      target.removeEventListener("mouseenter", onTargetHover);
+      target.removeEventListener("mouseleave", onTargetLeave);
+    };
+  }
+});
+
+/* ---------- Level 2 — Drink water ---------- */
+TASKS.push({
+  id: "water",
+  title: "Drink water",
+  instructions: "Hold the button to fill the glass. A quick tap works too.",
+  sceneHTML: function(){
+    return (
+      '<div class="stage">' +
+        '<div class="char-slot" id="char" style="right:8%; bottom:4%;">' + characterSVG("idle") + '</div>' +
+      '</div>'
+    );
+  },
+  mount: function(ctx){
+    ctx.interactiveEl.innerHTML =
+      '<div class="t-water">' +
+        '<div class="glass"><div class="water-fill" id="waterFill"></div></div>' +
+        '<div class="fill-row">' +
+          '<button class="btn-primary" id="fillBtn">Hold to fill</button>' +
+          '<div class="fill-progress-track"><div class="fill-progress-fill" id="fillProgress"></div></div>' +
+        '</div>' +
+      '</div>';
+    var btn = $("#fillBtn", ctx.interactiveEl);
+    var fill = $("#waterFill", ctx.interactiveEl);
+    var progress = $("#fillProgress", ctx.interactiveEl);
+    var level = 0, timer = null, holdStart = 0, recentPointer = false, pointerResetTimer = null, done = false;
+
+    function render(){
+      fill.style.height = level + "%";
+      progress.style.width = level + "%";
+    }
+    function addAmount(n){
+      if (done) return;
+      level = clamp(level + n, 0, 100);
+      render();
+      if (level >= 100 && !done) {
+        done = true;
+        clearInterval(timer);
+        btn.disabled = true;
+        var char = $("#char", ctx.worldEl);
+        char.innerHTML = characterSVG("sip");
+        char.classList.add("-bounce");
+        ctx.setStatus("A little reset.");
+        setTimeout(function(){ ctx.complete(); }, prefersReducedMotion ? 120 : 650);
+      }
+    }
+    function startHold(){
+      if (done) return;
+      holdStart = Date.now();
+      clearInterval(timer);
+      timer = setInterval(function(){ addAmount(3.5); }, 60);
+    }
+    function endHold(){
+      clearInterval(timer);
+      if (!done && Date.now() - holdStart < 180) addAmount(18); // guaranteed feedback for a quick tap
+    }
+    function onPointerDown(e){ recentPointer = true; clearTimeout(pointerResetTimer); startHold(); }
+    function onPointerUp(){ endHold(); pointerResetTimer = setTimeout(function(){ recentPointer = false; }, 250); }
+    function onClick(){ if (!recentPointer && !done) addAmount(18); } // keyboard activation path
+
+    btn.addEventListener("pointerdown", onPointerDown);
+    btn.addEventListener("pointerup", onPointerUp);
+    btn.addEventListener("pointerleave", onPointerUp);
+    btn.addEventListener("pointercancel", onPointerUp);
+    btn.addEventListener("click", onClick);
+    render();
+
+    return function cleanup(){
+      clearInterval(timer);
+      clearTimeout(pointerResetTimer);
+      btn.removeEventListener("pointerdown", onPointerDown);
+      btn.removeEventListener("pointerup", onPointerUp);
+      btn.removeEventListener("pointerleave", onPointerUp);
+      btn.removeEventListener("pointercancel", onPointerUp);
+      btn.removeEventListener("click", onClick);
+    };
+  }
+});
+
+/* ---------- Level 3 — Clean the desk ---------- */
+TASKS.push({
+  id: "desk",
+  title: "Clean the desk",
+  instructions: "Put each object where it belongs. Tap one, then tap its spot — or drag it.",
+  sceneHTML: function(){
+    return (
+      '<div class="stage desk-scene">' +
+        '<div class="char-slot" id="char" style="left:4%; top:6%; width:56px; height:56px;">' + characterSVG("idle") + '</div>' +
+        '<div class="desk-objects">' +
+          '<div class="desk-obj" id="obj-book" data-id="book" tabindex="0" role="button" aria-label="Book">' + bookSVG() + '</div>' +
+          '<div class="desk-obj" id="obj-cup" data-id="cup" tabindex="0" role="button" aria-label="Cup">' + cupSVG() + '</div>' +
+          '<div class="desk-obj" id="obj-phone" data-id="phone" tabindex="0" role="button" aria-label="Phone">' + phoneSVG() + '</div>' +
+        '</div>' +
+        '<div class="desk-targets">' +
+          '<div class="desk-target" data-target="book" tabindex="0" role="button" aria-label="Shelf, for the book">Shelf</div>' +
+          '<div class="desk-target" data-target="cup" tabindex="0" role="button" aria-label="Coaster, for the cup">Coaster</div>' +
+          '<div class="desk-target" data-target="phone" tabindex="0" role="button" aria-label="Dock, for the phone">Dock</div>' +
+        '</div>' +
+      '</div>'
+    );
+  },
+  mount: function(ctx){
+    var objects = Array.prototype.slice.call(ctx.worldEl.querySelectorAll(".desk-obj"));
+    var targets = Array.prototype.slice.call(ctx.worldEl.querySelectorAll(".desk-target"));
+    var placed = {};
+    var selectedId = null;
+    var cleanups = [];
+    var total = objects.length;
+
+    function targetFor(id){ return targets.filter(function(t){ return t.dataset.target === id; })[0]; }
+    function objFor(id){ return objects.filter(function(o){ return o.dataset.id === id; })[0]; }
+
+    function updateStatus(){
+      ctx.setStatus(Object.keys(placed).length + " of " + total + " objects sorted.");
+    }
+
+    function selectObj(obj){
+      objects.forEach(function(o){ o.classList.remove("-selected"); });
+      if (obj.classList.contains("-placed")) return;
+      selectedId = obj.dataset.id;
+      obj.classList.add("-selected");
+    }
+
+    function attemptPlace(id, targetEl){
+      var obj = objFor(id);
+      var correct = targetEl.dataset.target === id;
+      if (correct) {
+        obj.classList.remove("-selected");
+        obj.classList.add("-placed");
+        obj.style.transform = "";
+        obj.style.position = "absolute";
+        obj.style.left = (targetEl.offsetLeft + targetEl.offsetWidth / 2 - 23) + "px";
+        obj.style.top = (targetEl.offsetTop + 4) + "px";
+        targetEl.classList.add("-filled");
+        targetEl.classList.remove("-near");
+        placed[id] = true;
+        selectedId = null;
+        updateStatus();
+        if (Object.keys(placed).length === total) {
+          var char = $("#char", ctx.worldEl);
+          if (char) { char.innerHTML = characterSVG("happy"); char.classList.add("-bounce"); }
+          ctx.setStatus("You're getting there.");
+          setTimeout(function(){ ctx.complete(); }, prefersReducedMotion ? 120 : 650);
+        }
+      } else {
+        obj.classList.add("-shake");
+        setTimeout(function(){ obj.classList.remove("-shake"); }, 450);
+        if (obj.style.transform) obj.style.transform = "translate(0,0)";
+      }
+    }
+
+    objects.forEach(function(obj){
+      var dragCleanup = makeDraggable(obj, function(res){
+        if (obj.classList.contains("-placed")) return;
+        if (!res.moved) { selectObj(obj); return; }
+        var hit = targets.filter(function(t){
+          return rectOverlapRatio(obj.getBoundingClientRect(), t.getBoundingClientRect()) > 0.3;
+        })[0];
+        if (hit) attemptPlace(obj.dataset.id, hit);
+        else obj.style.transform = "translate(0,0)";
+      });
+      cleanups.push(dragCleanup);
+
+      function onKey(e){
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); selectObj(obj); }
+      }
+      obj.addEventListener("keydown", onKey);
+      cleanups.push(function(){ obj.removeEventListener("keydown", onKey); });
+    });
+
+    targets.forEach(function(t){
+      function activate(e){
+        if (e.type === "keydown" && e.key !== "Enter" && e.key !== " ") return;
+        if (e.type === "keydown") e.preventDefault();
+        if (selectedId) attemptPlace(selectedId, t);
+      }
+      t.addEventListener("click", activate);
+      t.addEventListener("keydown", activate);
+      cleanups.push(function(){ t.removeEventListener("click", activate); t.removeEventListener("keydown", activate); });
+    });
+
+    updateStatus();
+    return function cleanup(){ cleanups.forEach(function(fn){ fn(); }); };
+  }
+});
+
+/* ---------- Level 4 — Focus ---------- */
+TASKS.push({
+  id: "focus",
+  title: "Focus",
+  instructions: "A short, quiet pause. Watch it through, or pause if you need to.",
+  sceneHTML: function(){
+    return (
+      '<div class="stage" id="focusStage" style="background:linear-gradient(180deg,#FFFBF3,#FFFBF3);">' +
+        '<div class="char-slot" id="char" style="left:50%; bottom:6%; transform:translateX(-50%);">' + characterSVG("focus") + '</div>' +
+      '</div>'
+    );
+  },
+  mount: function(ctx){
+    var DURATION = 10000;
+    ctx.interactiveEl.innerHTML =
+      '<div class="t-focus">' +
+        '<svg class="focus-ring" viewBox="0 0 120 120">' +
+          '<circle class="-track" cx="60" cy="60" r="50"></circle>' +
+          '<circle class="-fill" id="ring" cx="60" cy="60" r="50" stroke-dasharray="314"></circle>' +
+        '</svg>' +
+        '<div><div class="focus-time" id="focusTime">10s</div>' +
+          '<div class="focus-controls">' +
+            '<button class="btn-ghost" id="pauseBtn">Pause</button>' +
+            '<button class="btn-ghost" id="restartBtn">Restart</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    var ring = $("#ring", ctx.interactiveEl);
+    var timeEl = $("#focusTime", ctx.interactiveEl);
+    var pauseBtn = $("#pauseBtn", ctx.interactiveEl);
+    var restartBtn = $("#restartBtn", ctx.interactiveEl);
+    var CIRC = 2 * Math.PI * 50;
+    ring.setAttribute("stroke-dasharray", CIRC);
+
+    var elapsed = 0, lastTs = null, paused = false, raf = null, done = false;
+
+    function tick(ts){
+      if (done) return;
+      if (lastTs === null) lastTs = ts;
+      if (!paused) elapsed += ts - lastTs;
+      lastTs = ts;
+      var pct = clamp(elapsed / DURATION, 0, 1);
+      ring.style.strokeDashoffset = CIRC * (1 - pct);
+      timeEl.textContent = Math.ceil((DURATION - elapsed) / 1000) + "s";
+      var stage = $("#focusStage", ctx.worldEl);
+      if (stage) {
+        // subtle environmental drift toward evening amber as time passes
+        var warm = Math.round(pct * 18);
+        stage.style.background = "linear-gradient(180deg, #FFFBF3, " + (pct > 0.5 ? "#FDEFD9" : "#FFFBF3") + ")";
+      }
+      if (elapsed >= DURATION) {
+        done = true;
+        timeEl.textContent = "0s";
+        var char = $("#char", ctx.worldEl);
+        if (char) { char.innerHTML = characterSVG("happy"); char.classList.add("-bounce"); }
+        ctx.setStatus("One little thing at a time.");
+        setTimeout(function(){ ctx.complete(); }, prefersReducedMotion ? 120 : 500);
+        return;
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    raf = requestAnimationFrame(tick);
+
+    function onPause(){
+      paused = !paused;
+      pauseBtn.textContent = paused ? "Resume" : "Pause";
+      lastTs = null;
+    }
+    function onRestart(){
+      elapsed = 0; lastTs = null; paused = false;
+      pauseBtn.textContent = "Pause";
+    }
+    pauseBtn.addEventListener("click", onPause);
+    restartBtn.addEventListener("click", onRestart);
+
+    return function cleanup(){
+      done = true;
+      if (raf) cancelAnimationFrame(raf);
+      pauseBtn.removeEventListener("click", onPause);
+      restartBtn.removeEventListener("click", onRestart);
+    };
+  }
+});
+
+/* ---------- Level 5 — Go outside ---------- */
+TASKS.push({
+  id: "walk",
+  title: "Go outside",
+  instructions: "Hold Walk to move, tap for small steps, or use the arrow keys.",
+  sceneHTML: function(){
+    return (
+      '<div class="stage">' +
+        '<div class="walk-track"><div class="walk-track-fill" id="trackFill"></div></div>' +
+        '<div class="exit-marker">' + exitSVG() + '</div>' +
+        '<div class="char-slot" id="char" style="left:6%; bottom:14%;">' + characterSVG("walk") + '</div>' +
+      '</div>'
+    );
+  },
+  mount: function(ctx){
+    ctx.interactiveEl.innerHTML =
+      '<div class="t-walk">' +
+        '<div class="walk-path"><div class="walk-path-fill" id="walkFill"></div></div>' +
+        '<div class="walk-row"><button class="btn-primary" id="walkBtn">Hold to walk</button></div>' +
+        '<p class="walk-hint">Tip: arrow keys or space also work.</p>' +
+      '</div>';
+    var btn = $("#walkBtn", ctx.interactiveEl);
+    var pathFill = $("#walkFill", ctx.interactiveEl);
+    var trackFill = $("#trackFill", ctx.worldEl);
+    var charEl = $("#char", ctx.worldEl);
+    var pos = 0, timer = null, holdStart = 0, done = false, recentPointer = false, pointerResetTimer = null;
+
+    function render(){
+      pathFill.style.width = pos + "%";
+      trackFill.style.width = pos + "%";
+      charEl.style.left = "calc(6% + " + (pos * 0.8) + "%)";
+    }
+    function addAmount(n){
+      if (done) return;
+      pos = clamp(pos + n, 0, 100);
+      render();
+      if (pos >= 100 && !done) {
+        done = true;
+        clearInterval(timer);
+        btn.disabled = true;
+        charEl.innerHTML = characterSVG("final");
+        charEl.classList.add("-bounce");
+        ctx.setStatus("Outside looks good today.");
+        setTimeout(function(){ ctx.complete(); }, prefersReducedMotion ? 120 : 650);
+      }
+    }
+    function startHold(){
+      if (done) return;
+      holdStart = Date.now();
+      clearInterval(timer);
+      timer = setInterval(function(){ addAmount(2.2); }, 50);
+    }
+    function endHold(){
+      clearInterval(timer);
+      if (!done && Date.now() - holdStart < 180) addAmount(10);
+    }
+    function onPointerDown(){ recentPointer = true; clearTimeout(pointerResetTimer); startHold(); }
+    function onPointerUp(){ endHold(); pointerResetTimer = setTimeout(function(){ recentPointer = false; }, 250); }
+    function onClick(){ if (!recentPointer && !done) addAmount(10); }
+
+    var heldKeys = {};
+    function onKeyDown(e){
+      if (done) return;
+      if (e.key === "ArrowRight" || e.key === " ") {
+        e.preventDefault();
+        if (!heldKeys[e.key]) { heldKeys[e.key] = true; startHold(); }
+      }
+    }
+    function onKeyUp(e){
+      if (e.key === "ArrowRight" || e.key === " ") {
+        heldKeys[e.key] = false;
+        if (!heldKeys.ArrowRight && !heldKeys[" "]) endHold();
+      }
+    }
+
+    btn.addEventListener("pointerdown", onPointerDown);
+    btn.addEventListener("pointerup", onPointerUp);
+    btn.addEventListener("pointerleave", onPointerUp);
+    btn.addEventListener("pointercancel", onPointerUp);
+    btn.addEventListener("click", onClick);
+    document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("keyup", onKeyUp);
+    render();
+
+    return function cleanup(){
+      clearInterval(timer);
+      clearTimeout(pointerResetTimer);
+      btn.removeEventListener("pointerdown", onPointerDown);
+      btn.removeEventListener("pointerup", onPointerUp);
+      btn.removeEventListener("pointerleave", onPointerUp);
+      btn.removeEventListener("pointercancel", onPointerUp);
+      btn.removeEventListener("click", onClick);
+      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("keyup", onKeyUp);
+    };
+  }
+});
+
+/* ============================================================
+   3. GAME ENGINE — state machine, persistence, transitions
+   ============================================================ */
+var STORAGE_KEY = "madi-game-state-v1";
+var TOTAL = TASKS.length;
+
+var engine = {
+  state: "welcome",      // welcome | playing | completing | finished
+  index: 0,
+  completed: [],
+  currentCleanup: null
+};
+
+var worldEl = $("#world");
+var titleEl = $("#task-title");
+var instrEl = $("#task-instructions");
+var interactiveEl = $("#task-interactive");
+var statusEl = $("#task-status");
+var stageLabel = $("#stage-label");
+var progressFill = $("#progress-fill");
+var progressTrack = $(".progress-track");
+var transitionEl = $("#transition");
+var transitionText = $("#transition-text");
+
+function loadSaved(){
+  try {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    var data = JSON.parse(raw);
+    if (!data || typeof data.index !== "number" || !Array.isArray(data.completed)) return null;
+    if (data.index < 0 || data.index > TOTAL) return null;
+    // Never trust saved data that skips an unfinished task: the
+    // completed list length must match the index exactly.
+    if (data.completed.length !== data.index) return null;
+    var validIds = TASKS.map(function(t){ return t.id; });
+    if (!data.completed.every(function(id){ return validIds.indexOf(id) !== -1; })) return null;
+    return data;
+  } catch (e) { return null; }
+}
+function save(){
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ index: engine.index, completed: engine.completed })); }
+  catch (e) { /* best-effort; game stays fully playable without persistence */ }
+}
+function clearSaved(){
+  try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+}
+
+function setStatus(msg, isError){
+  statusEl.textContent = msg || "";
+  statusEl.classList.toggle("-error", !!isError);
+}
+
+function renderTask(i){
+  var task = TASKS[i];
+  worldEl.innerHTML = task.sceneHTML();
+  titleEl.textContent = task.title;
+  instrEl.textContent = task.instructions;
+  interactiveEl.innerHTML = "";
+  setStatus("");
+  stageLabel.textContent = "Stage " + (i + 1) + " of " + TOTAL;
+  progressFill.style.width = (i / TOTAL * 100) + "%";
+  progressTrack.setAttribute("aria-valuenow", String(i));
+
+  var ctx = {
+    worldEl: worldEl,
+    interactiveEl: interactiveEl,
+    statusEl: statusEl,
+    setStatus: setStatus,
+    complete: function(){ completeCurrent(); }
+  };
+  engine.currentCleanup = task.mount(ctx);
+  engine.state = "playing";
+}
+
+function completeCurrent(){
+  // Guards: only the current task may complete, and only once. This is
+  // the single choke point every task's success path routes through, so
+  // rapid or duplicate calls (double-tap, two listeners firing) can't
+  // skip stages or re-trigger a transition mid-flight.
+  if (engine.state !== "playing") return;
+  engine.state = "completing";
+  var task = TASKS[engine.index];
+  if (engine.currentCleanup) { engine.currentCleanup(); engine.currentCleanup = null; }
+  if (engine.completed.indexOf(task.id) === -1) engine.completed.push(task.id);
+  engine.index += 1;
+  save();
+  progressFill.style.width = (engine.index / TOTAL * 100) + "%";
+
+  var lines = ["Nice.", "One little step.", "Look at that.", "Good.", "There we go."];
+  transitionText.textContent = lines[Math.min(engine.index - 1, lines.length - 1)];
+  transitionEl.hidden = false;
+  transitionEl.setAttribute("aria-hidden", "false");
+  requestAnimationFrame(function(){ transitionEl.classList.add("-show"); });
+
+  var delay = prefersReducedMotion ? 220 : 900;
+  setTimeout(function(){
+    transitionEl.classList.remove("-show");
+    setTimeout(function(){
+      transitionEl.hidden = true;
+      transitionEl.setAttribute("aria-hidden", "true");
+      if (engine.index >= TOTAL) finish(); else renderTask(engine.index);
+    }, prefersReducedMotion ? 10 : 260);
+  }, delay);
+}
+
+function finish(){
+  engine.state = "finished";
+  $("#scene-game").hidden = true;
+  $("#scene-game").setAttribute("aria-hidden", "true");
+  var ending = $("#scene-ending");
+  ending.hidden = false;
+  ending.setAttribute("aria-hidden", "false");
+  $("#ending-summary").textContent = engine.completed.length + " of " + TOTAL + " little things, done.";
+}
+
+function startGame(fromIndex){
+  $("#scene-welcome").hidden = true;
+  $("#scene-welcome").setAttribute("aria-hidden", "true");
+  var game = $("#scene-game");
+  game.hidden = false;
+  game.setAttribute("aria-hidden", "false");
+  engine.index = fromIndex || 0;
+  renderTask(engine.index);
+}
+
+function resetAll(){
+  if (engine.currentCleanup) { engine.currentCleanup(); engine.currentCleanup = null; }
+  clearSaved();
+  engine.state = "welcome";
+  engine.index = 0;
+  engine.completed = [];
+  $("#scene-game").hidden = true;
+  $("#scene-game").setAttribute("aria-hidden", "true");
+  $("#scene-ending").hidden = true;
+  $("#scene-ending").setAttribute("aria-hidden", "true");
+  var welcome = $("#scene-welcome");
+  welcome.hidden = false;
+  welcome.setAttribute("aria-hidden", "false");
+}
+
+$("#btn-start").addEventListener("click", function(){
+  var saved = loadSaved();
+  if (saved && saved.index > 0 && saved.index < TOTAL) {
+    engine.completed = saved.completed;
+    startGame(saved.index);
+  } else {
+    startGame(0);
+  }
+});
+$("#btn-again").addEventListener("click", resetAll);
+$("#btn-reset").addEventListener("click", function(){
+  if (window.confirm("Reset today's progress?")) resetAll();
+});
+
+})();
+</script>
+</body>
+</html>
