@@ -6,22 +6,18 @@
 
   var SITE_DATA = {
     skills: [
-      { name: "Languages", items: ["Python", "Java", "JavaScript", "C", "C++", "SQL"], tab: "#ffd100" },
-      { name: "AI / ML", items: ["Machine Learning", "Generative AI", "NLP", "Data Science"], tab: "#ff4d8d" },
-      { name: "Web", items: ["React", "TypeScript", "Node.js", "HTML", "CSS"], tab: "#34d399" },
-      { name: "Tools", items: ["Git", "GitHub", "Docker"], tab: "#a3b8ff" }
+      { name: "Frontend", items: ["JavaScript", "TypeScript", "React", "HTML", "CSS", "Interaction design"], tab: "#ffd100" },
+      { name: "Programming", items: ["Python", "Java", "C", "C++", "SQL"], tab: "#ff4d8d" },
+      { name: "AI / Automation", items: ["Machine Learning", "Generative AI", "NLP", "Data Science"], tab: "#34d399" },
+      { name: "Tools + Infrastructure", items: ["Git", "GitHub", "Docker", "FastAPI", "Node.js"], tab: "#a3b8ff" }
     ],
     timeline: [
       { year: "2024", title: "Foundations", text: "Core CS fundamentals, data structures, and the first real projects — learning by building rather than only studying.", stack: ["Python", "Java", "SQL"] },
       { year: "2025", title: "Building", text: "Moved into full‑stack development and shipped complete products end to end, from backend APIs to interfaces.", stack: ["React", "Node.js", "TypeScript"] },
       { year: "2026", title: "Systems + AI", text: "Combined applied machine learning with production engineering — including LEDGR — to build systems that reason about data, not just display it.", stack: ["FastAPI", "Machine Learning", "Docker"] },
-      { year: "2027", title: "What's next", text: "Deeper AI/ML work, larger systems, and new collaborations.", stack: [], badge: true }
+      { year: "Next", title: "What's next", text: "Deeper AI/ML work, larger systems, and new collaborations.", stack: [], badge: true }
     ],
-    archive: [
-      { name: "madi.me", desc: "An animated task-adventure — complete one challenge to unlock the next.", url: "./madi/madi.html", local: true },
-      { name: "shijo-site", desc: "This site — a from-scratch, dependency-light personal site with a universal UPI payment flow.", url: "https://github.com/shijo-hex/shijo-site" },
-      { name: "More on GitHub", desc: "Additional projects and experiments live on the profile below.", url: "https://github.com/shijo-hex" }
-    ]
+    githubReposUrl: "https://api.github.com/users/shijo-hex/repos?sort=updated&per_page=30&type=owner"
   };
 
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -167,7 +163,7 @@
    * ------------------------------------------------------------------- */
   (function nav() {
     var header = document.getElementById("site-nav");
-    var links = document.querySelectorAll(".nav-links a");
+    var links = document.querySelectorAll(".nav-links a[data-sec]");
     var sections = Array.prototype.map.call(links, function (l) { return document.getElementById(l.dataset.sec); }).filter(Boolean);
     if ("IntersectionObserver" in window && sections.length) {
       var io = new IntersectionObserver(function (entries) {
@@ -195,14 +191,20 @@
       toggle.setAttribute("aria-expanded", "true"); document.body.style.overflow = "hidden";
       var first = menu.querySelector("a"); if (first) first.focus();
     }
-    function closeMenu() {
+    function closeMenu(restoreFocus) {
       menu.classList.remove("-open"); menu.setAttribute("aria-hidden", "true");
-      toggle.setAttribute("aria-expanded", "false"); document.body.style.overflow = ""; toggle.focus();
+      toggle.setAttribute("aria-expanded", "false"); document.body.style.overflow = "";
+      if (restoreFocus !== false && toggle) toggle.focus();
     }
     if (toggle) toggle.addEventListener("click", openMenu);
-    if (closeBtn) closeBtn.addEventListener("click", closeMenu);
-    menu.querySelectorAll("a").forEach(function (a) { a.addEventListener("click", closeMenu); });
-    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && menu.classList.contains("-open")) closeMenu(); });
+    if (closeBtn) closeBtn.addEventListener("click", function () { closeMenu(true); });
+    menu.querySelectorAll("a").forEach(function (a) { a.addEventListener("click", function () { closeMenu(false); }); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && menu.classList.contains("-open")) closeMenu(true); });
+    document.addEventListener("focusin", function (e) {
+      if (!menu.classList.contains("-open") || menu.contains(e.target)) return;
+      var focusable = menu.querySelectorAll("a,button");
+      if (focusable.length) focusable[0].focus();
+    });
   })();
 
   /* ---------------------------------------------------------------------
@@ -303,17 +305,89 @@
   (function archive() {
     var wrap = document.getElementById("archive-list");
     if (!wrap) return;
-    SITE_DATA.archive.forEach(function (p, i) {
-      var a = document.createElement("a");
-      a.className = "arch-row";
-      a.href = p.url;
-      if (!p.local) { a.target = "_blank"; a.rel = "noopener"; }
-      a.innerHTML =
-        '<span class="num mono">' + String(i + 1).padStart(2, "0") + "</span>" +
-        '<span><span class="name">' + p.name + '</span><div class="desc">' + p.desc + "</div></span>" +
-        '<span class="arr">↗</span>';
-      wrap.appendChild(a);
-    });
+    var githubLink = "https://github.com/shijo-hex";
+    var cacheKey = "shijo-github-repos-v1";
+    var cached = null;
+    try {
+      var stored = JSON.parse(sessionStorage.getItem(cacheKey) || "null");
+      if (stored && Array.isArray(stored.repos) && Date.now() - stored.savedAt < 5 * 60 * 1000) cached = stored;
+    } catch (e) {}
+
+    function renderLoading() {
+      wrap.setAttribute("aria-busy", "true");
+      wrap.innerHTML = '<div class="arch-row archive-state" role="status"><span class="num mono">…</span><span><span class="name">Loading experiments</span><div class="desc">Fetching the latest public projects from GitHub.</div></span><span class="arr" aria-hidden="true">↻</span></div>';
+    }
+    function renderFallback(message) {
+      wrap.removeAttribute("aria-busy");
+      wrap.innerHTML = '<a class="arch-row archive-state" href="' + githubLink + '" target="_blank" rel="noopener"><span class="num mono">↗</span><span><span class="name">View GitHub</span><div class="desc">' + message + '</div></span><span class="arr" aria-hidden="true">↗</span></a>';
+    }
+    function renderRepos(repos) {
+      var projects = (repos || []).filter(function (repo) { return !repo.fork; })
+        .sort(function (a, b) { return new Date(b.pushed_at || 0) - new Date(a.pushed_at || 0); })
+        .slice(0, 8);
+      wrap.removeAttribute("aria-busy");
+      wrap.innerHTML = "";
+      if (!projects.length) { renderFallback("No public repositories are available right now."); return; }
+      projects.forEach(function (repo, i) {
+        var a = document.createElement("a");
+        var description = repo.description || "A public project from Shijo's GitHub.";
+        var details = [repo.language, (repo.stargazers_count || 0) + " stars", (repo.forks_count || 0) + " forks", timeAgo(repo.pushed_at)].filter(Boolean);
+        a.className = "arch-row";
+        a.href = repo.html_url || githubLink;
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.innerHTML = '<span class="num mono">' + String(i + 1).padStart(2, "0") + '</span>' +
+          '<span><span class="name"></span><div class="desc"></div><div class="repo-meta"></div></span>' +
+          '<span class="arr" aria-hidden="true">↗</span>';
+        a.querySelector(".name").textContent = repo.name || "Untitled repository";
+        a.querySelector(".desc").textContent = description;
+        a.querySelector(".repo-meta").textContent = details.join(" · ");
+        wrap.appendChild(a);
+      });
+      var more = document.createElement("a");
+      more.className = "arch-row archive-more";
+      more.href = githubLink;
+      more.target = "_blank";
+      more.rel = "noopener";
+      more.innerHTML = '<span class="num mono">↗</span><span><span class="name">More experiments on GitHub</span><div class="desc">Browse all public projects and source code.</div></span><span class="arr" aria-hidden="true">↗</span>';
+      wrap.appendChild(more);
+    }
+    function timeAgo(value) {
+      if (!value) return "";
+      var date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "";
+      var days = Math.max(0, Math.floor((Date.now() - date.getTime()) / 86400000));
+      if (days < 1) return "updated today";
+      if (days === 1) return "updated 1 day ago";
+      if (days < 30) return "updated " + days + " days ago";
+      var months = Math.floor(days / 30);
+      if (months < 12) return "updated " + months + (months === 1 ? " month ago" : " months ago");
+      var years = Math.floor(months / 12);
+      return "updated " + years + (years === 1 ? " year ago" : " years ago");
+    }
+    function saveAndRender(repos) {
+      try { sessionStorage.setItem(cacheKey, JSON.stringify({ repos: repos, savedAt: Date.now() })); } catch (e) {}
+      renderRepos(repos);
+    }
+
+    if (cached) renderRepos(cached.repos);
+    else renderLoading();
+    if (!window.fetch) {
+      if (!cached) renderFallback("Live projects need a browser with fetch support.");
+      return;
+    }
+    fetch(SITE_DATA.githubReposUrl, { headers: { Accept: "application/vnd.github+json" } })
+      .then(function (response) {
+        if (!response.ok) throw new Error("GitHub returned " + response.status);
+        return response.json();
+      })
+      .then(function (repos) {
+        if (!Array.isArray(repos)) throw new Error("Unexpected GitHub response");
+        saveAndRender(repos);
+      })
+      .catch(function () {
+        if (!cached) renderFallback("GitHub is temporarily unavailable or rate-limited. Browse the profile directly.");
+      });
   })();
 
   /* ---------------------------------------------------------------------
