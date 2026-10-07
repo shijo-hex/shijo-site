@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Shijo — Software Engineer</title>
-<meta name="description" content="Shijo is a software engineer building AI/ML systems and full-stack products — B.Tech CSE, India.">
+<title>Shijo Sylan — Software Engineer & Product Builder</title>
+<meta name="description" content="Shijo Sylan builds AI/ML systems, full-stack products, and playful interactive experiments. Explore LEDGR, Madi, and more.">
 <meta name="theme-color" content="#2A3EFF">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Shijo — Software Engineer">
-<meta property="og:description" content="AI/ML, full-stack, and product engineering.">
+<meta property="og:title" content="Shijo Sylan — Software Engineer & Product Builder">
+<meta property="og:description" content="AI/ML systems, full-stack products, and playful interactive experiments.">
 <link rel="canonical" href="https://shijo.me/">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%232A3EFF%22/><text x=%2250%22 y=%2270%22 font-size=%2260%22 font-family=%22sans-serif%22 font-weight=%22900%22 fill=%22%23FFD100%22 text-anchor=%22middle%22>S</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -56,8 +56,8 @@ body[data-theme="dark"]{
   --c-pink:    #B84B61;   /* deep burgundy — the main emotional accent */
   --c-green:   #58A995;   /* muted teal — secondary accent */
   --muted:     #A7A49D;   /* warm gray — secondary text */
-  --shadow:    0 8px 20px rgba(0,0,0,.35), 0 0 0 1px #34343A;
-  --shadow-sm: 0 5px 14px rgba(0,0,0,.3), 0 0 0 1px #34343A;
+  --shadow:    5px 5px 0 rgba(0,0,0,.38), 0 0 0 1px rgba(244,240,232,.10);
+  --shadow-sm: 3px 3px 0 rgba(0,0,0,.34), 0 0 0 1px rgba(244,240,232,.08);
 }
 body,
 .zone, header.nav, .btn, .skill-cat, .chapter, .arch-row, .status-card,
@@ -73,6 +73,11 @@ body[data-theme="dark"] .zone-pink{   background:#171013; color:var(--ink); }
 body[data-theme="dark"] .zone-green{  background:#0F1715; color:var(--ink); }
 body[data-theme="dark"] .zone-ink{    background:#090A0D; color:var(--ink); }
 body[data-theme="dark"] .hero.zone-blue{ background:#10121A; }
+body[data-theme="dark"] .hero-role b{ background:rgba(217,184,90,.2); color:#F2D98F; }
+body[data-theme="dark"] .madi-scene{ filter:brightness(.88) saturate(.9); box-shadow:inset 0 0 24px rgba(0,0,0,.22); }
+body[data-theme="dark"] .madi-sun{ box-shadow:none; }
+body[data-theme="dark"] .madi-star{ text-shadow:none; }
+body[data-theme="dark"] .support-card{ background:#342b17; color:#F4F0E8; }
 /* decorative blobs/stars stay, just quieter — graphic accents, not glow */
 body[data-theme="dark"] .blob{ opacity:.16; filter:saturate(.75); }
 body[data-theme="dark"] .star{ opacity:.5; filter:saturate(.8); }
@@ -164,7 +169,7 @@ header.nav.-scrolled{ background:color-mix(in srgb, var(--cream) 88%, transparen
    HERO
    ============================================================ */
 .hero{ min-height:100svh; display:flex; flex-direction:column; justify-content:center; padding:120px var(--edge) 60px; position:relative; }
-.hero-inner{ position:relative; z-index:1; }
+.hero-inner{ position:relative; z-index:1; max-width:1100px; }
 .hero-meta{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:26px; }
 .hero-name{ font-family:var(--font-display); font-weight:400; font-size:clamp(3rem,14vw,9.5rem); line-height:.88; letter-spacing:-.01em; margin:0 0 20px; text-transform:uppercase; }
 .hero-role{ font-family:var(--font-body); font-weight:600; font-size:clamp(1.05rem,2.2vw,1.4rem); max-width:600px; line-height:1.45; }
@@ -172,6 +177,24 @@ header.nav.-scrolled{ background:color-mix(in srgb, var(--cream) 88%, transparen
 .hero-foot{ margin-top:clamp(44px,8vw,84px); display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap; }
 .hero-ctas{ display:flex; gap:14px; flex-wrap:wrap; }
 .scroll-cue{ display:flex; align-items:center; gap:8px; font-family:var(--font-body); font-weight:700; font-size:11.5px; text-transform:uppercase; }
+.hero-name{ max-width:9ch; }
+.hero-role{ max-width:660px; }
+.hero-role .positioning{ display:block; margin-top:10px; font-size:.76em; font-weight:500; opacity:.88; }
+.section-title{ margin-bottom:22px; }
+.build-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:14px; }
+.build-item{ background:var(--cream); color:var(--ink); border:var(--bw) solid var(--ink); border-radius:14px; padding:20px; box-shadow:var(--shadow-sm); transition:transform var(--dur-fast) var(--ease),box-shadow var(--dur-fast) var(--ease); }
+.build-item:hover{ transform:translate(3px,3px); box-shadow:0 0 0 var(--ink); }
+.build-item b{ display:block; font:400 clamp(1.05rem,2vw,1.35rem)/1.15 var(--font-display); text-transform:uppercase; }
+.build-item span{ display:block; margin-top:8px; color:var(--muted); font-size:.88rem; }
+.project-note{ max-width:60ch; font-size:.96rem; font-weight:500; color:var(--muted); }
+.payment-feature{ display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:24px; margin-top:24px; padding:clamp(20px,4vw,36px); background:var(--cream); color:var(--ink); border:var(--bw) solid var(--ink); border-radius:16px; box-shadow:var(--shadow); transition:transform var(--dur-fast) var(--ease),box-shadow var(--dur-fast) var(--ease); }
+.payment-feature:hover{ transform:translate(2px,2px); box-shadow:2px 2px 0 var(--ink); }
+.payment-feature h3{ font:400 clamp(1.25rem,3vw,2rem)/1 var(--font-display); text-transform:uppercase; }
+.payment-feature p{ max-width:65ch; margin-top:10px; color:var(--muted); font-weight:500; }
+.payment-feature .eyebrow{ margin-bottom:12px; }
+.payment-feature .btn{ white-space:nowrap; }
+.now-copy{ max-width:58ch; font-size:1.1rem; font-weight:600; }
+@media(max-width:640px){.payment-feature{grid-template-columns:1fr}.payment-feature .btn{width:100%;justify-content:center}.hero-foot{align-items:flex-start}.hero-ctas{width:100%}.hero-ctas .btn{flex:1;justify-content:center}.hero-name{max-width:none}}
 
 /* ============================================================
    BUTTONS — thick border, offset shadow, press on hover
@@ -254,6 +277,9 @@ header.nav.-scrolled{ background:color-mix(in srgb, var(--cream) 88%, transparen
 .arch-row .num{ font-family:var(--font-mono); font-size:11px; color:var(--muted); }
 .arch-row .name{ font-family:var(--font-display); font-weight:400; font-size:clamp(1rem,2vw,1.2rem); text-transform:uppercase; }
 .arch-row .desc{ color:var(--muted); font-size:.88rem; margin-top:2px; font-weight:500; }
+.arch-row .repo-meta{ color:var(--muted); font:600 10px/1.5 var(--font-mono); margin-top:8px; text-transform:uppercase; letter-spacing:.025em; }
+.archive-state{ cursor:default; }
+.archive-more{ margin-top:16px; }
 .arch-row .arr{ font-weight:900; }
 
 /* Madi feature */
@@ -335,7 +361,7 @@ body.reduced-motion .reveal{ opacity:1; transform:none; }
 body.reduced-motion .about-statement .line span{ transform:none; }
 </style>
 </head>
-<body>
+<body class="intro-lock">
 <a class="skip-link" href="#main">Skip to content</a>
 <div id="cursor-ring" aria-hidden="true"></div>
 <div id="cursor-dot" aria-hidden="true"></div>
@@ -347,9 +373,10 @@ body.reduced-motion .about-statement .line span{ transform:none; }
   <div class="nav-right">
     <nav class="nav-links" aria-label="Primary">
       <a href="#about" data-sec="about">About</a>
+      <a href="#work" data-sec="work">Work</a>
       <a href="#skills" data-sec="skills">Skills</a>
       <a href="#journey" data-sec="journey">Journey</a>
-      <a href="#work" data-sec="work">Work</a>
+      <a href="#now" data-sec="now">Now</a>
       <a href="#contact" data-sec="contact">Contact</a>
     </nav>
     <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark mode">
@@ -363,9 +390,10 @@ body.reduced-motion .about-statement .line span{ transform:none; }
 <nav id="mobile-menu" aria-label="Mobile" aria-hidden="true">
   <button class="mm-close btn" id="mm-close" aria-label="Close menu" style="background:transparent; box-shadow:none;">Close</button>
   <a href="#about">About</a>
+  <a href="#work">Work</a>
   <a href="#skills">Skills</a>
   <a href="#journey">Journey</a>
-  <a href="#work">Work</a>
+  <a href="#now">Now</a>
   <a href="#contact">Contact</a>
   <button id="mm-theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark mode">
     <svg class="moon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
@@ -377,7 +405,7 @@ body.reduced-motion .about-statement .line span{ transform:none; }
 <main id="main">
   <div id="top"></div>
 
-  <section class="hero zone zone-blue" aria-label="Introduction">
+  <section class="hero zone zone-blue" id="home" aria-label="Introduction">
     <div class="blob -a" style="background:var(--c-yellow); top:-60px; right:-40px;" aria-hidden="true"></div>
     <div class="blob -b" style="background:var(--c-pink); bottom:8%; left:-40px;" aria-hidden="true"></div>
     <div class="star" style="background:var(--c-yellow); top:18%; right:12%;" aria-hidden="true"></div>
@@ -387,12 +415,12 @@ body.reduced-motion .about-statement .line span{ transform:none; }
         <span class="eyebrow -onlight" style="background:var(--cream); color:var(--ink);">B.TECH CSE</span>
         <span class="eyebrow -onlight" style="background:var(--cream); color:var(--ink);">INDIA</span>
       </div>
-      <h1 class="hero-name">SHIJO</h1>
-      <p class="hero-role">Software engineer building <b>AI / ML</b> systems, <b>full‑stack</b> products, and the interfaces that hold them together.</p>
+        <h1 class="hero-name">SHIJO SYLAN</h1>
+      <p class="hero-role">Software engineer building <b>AI / ML</b> systems, <b>full‑stack</b> products, and the interfaces that hold them together.<span class="positioning">Useful software, playful experiments, and interfaces with a point of view.</span></p>
       <div class="hero-foot">
         <div class="hero-ctas">
           <a href="#work" class="btn -onblue" data-magnetic>View selected work</a>
-          <a href="./pay/" class="btn" data-magnetic>Support via UPI</a>
+          <a href="mailto:hello@shijo.site" class="btn" data-magnetic>Let's talk</a>
         </div>
         <div class="scroll-cue">↓ SCROLL</div>
       </div>
@@ -425,6 +453,64 @@ body.reduced-motion .about-statement .line span{ transform:none; }
     </div>
   </section>
 
+  <section class="zone zone-blue" id="work" aria-label="Selected work">
+    <div class="blob -b" style="background:var(--c-pink); top:6%; left:4%; opacity:.35;" aria-hidden="true"></div>
+    <div class="section">
+    <div class="section-head"><span class="eyebrow -onlight" style="background:var(--cream); color:var(--ink);">Selected work — 03</span></div>
+    <article aria-label="Featured project">
+      <div class="project-head reveal">
+        <span class="eyebrow -onlight" style="background:var(--cream); color:var(--ink);">Featured — 01 · Finance / AI</span>
+        <h3 class="project-title">LEDGR</h3>
+        <p class="project-sub">AI‑powered finance controller</p>
+        <p class="project-note">A finance system designed to turn transaction history into useful next steps. Built as a data pipeline, ML layer, and API so the insight can evolve without rebuilding the product.</p>
+        <div class="project-stack"><span>Python</span><span>FastAPI</span><span>Machine Learning</span><span>Docker</span></div>
+        <div class="project-links">
+          <a class="btn -onblue" href="https://github.com/shijo-hex" target="_blank" rel="noopener">View source ↗</a>
+        </div>
+      </div>
+      <div class="chapters" id="project-chapters">
+        <div class="chapter reveal"><div class="ch-label"><b>01</b> Context</div><p>Personal finance is scattered across statements, apps and spreadsheets. Most tools show what happened; LEDGR explores how data can help decide what to do next.</p></div>
+        <div class="chapter reveal"><div class="ch-label"><b>02</b> Approach</div><p>Build a controller that reads transaction data, categorises it, and turns the resulting picture into guidance a person can act on.</p></div>
+        <div class="chapter reveal"><div class="ch-label"><b>03</b> How it works</div><p>A FastAPI backend handles ingestion and a replaceable machine-learning layer supports categorisation and forecasting. A lightweight client presents clear guidance instead of raw numbers.</p></div>
+        <div class="chapter reveal"><div class="ch-label"><b>04</b> What I learned</div><p>The model is only one part of a useful product: data quality, explainable outputs, and the path from insight to action matter just as much.</p></div>
+      </div>
+    </article>
+
+    <article class="madi-feature reveal" aria-labelledby="madi-title">
+      <div class="madi-copy">
+        <div class="madi-kicker"><span class="eyebrow -onink">From the lab</span><span>Interactive prototype · 02</span></div>
+        <h3 class="madi-title" id="madi-title">madi<span>.me</span></h3>
+        <p class="madi-tagline">Small tasks.<br>Tiny adventures.</p>
+        <p class="madi-description">A tiny browser game that turns everyday tasks into playful interactive moments. Its five short challenges explore state, feedback, touch input, animation, and game feel.</p>
+        <div class="madi-meta">Type&nbsp; / &nbsp;Playable experiment<br>Focus&nbsp; / &nbsp;Interaction design + frontend engineering</div>
+        <div class="madi-stack" aria-label="Built with HTML, CSS, JavaScript, SVG, and animation"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>Interaction</span><span>Animation</span></div>
+        <div class="madi-links">
+          <a class="btn madi-play" href="./madi/" aria-label="Play madi.me interactive prototype">Play Madi ↗</a>
+          <a class="btn madi-source" href="https://github.com/shijo-hex/shijo-site/tree/main/madi" target="_blank" rel="noopener">View source ↗</a>
+        </div>
+      </div>
+      <div class="madi-scene" aria-hidden="true">
+        <div class="madi-sky"></div><span class="madi-preview-label">Playable · 5 small challenges</span><div class="madi-sun"></div><div class="madi-cloud"></div>
+        <div class="madi-hill madi-hill-back"></div><div class="madi-hill"></div>
+        <div class="madi-house"><div class="madi-roof"></div><div class="madi-window"></div><div class="madi-door"></div></div>
+        <div class="madi-character"><div class="madi-character-head"></div><div class="madi-character-body"></div></div><span class="madi-star">✦</span><div class="madi-ground"></div>
+      </div>
+    </article>
+
+    <article class="payment-feature reveal" aria-labelledby="payment-title">
+      <div><span class="eyebrow -onink">Product engineering · 03</span><h3 id="payment-title">Personal UPI checkout</h3>
+      <p>A personal UPI checkout built without a payment provider: a direct UPI app handoff on mobile, a matching dynamic QR on desktop, custom amounts, and a copyable UPI ID. The unusual part is the complete flow built with browser-native links and client-side QR generation, while clearly handling the fact that the page cannot verify whether a payment completed.</p>
+      <div class="project-stack"><span>UPI intent</span><span>QR fallback</span><span>Mobile UX</span><span>Vanilla JS</span></div></div>
+      <a class="btn -onblue" href="./pay/">Explore checkout ↗</a>
+    </article>
+
+    <div class="archive">
+      <div class="section-head" style="margin-bottom:8px;"><span class="eyebrow -onlight" style="background:var(--cream); color:var(--ink);">Lab / Experiments</span></div>
+      <div class="archive-list" id="archive-list"></div>
+    </div>
+    </div>
+  </section>
+
   <section class="zone zone-pink" id="skills" aria-label="Skills">
     <div class="blob -a" style="background:var(--c-yellow); bottom:-60px; right:6%; opacity:.4;" aria-hidden="true"></div>
     <div class="section">
@@ -444,69 +530,12 @@ body.reduced-motion .about-statement .line span{ transform:none; }
     </div>
   </section>
 
-  <section class="zone zone-blue" id="work" aria-label="Selected work">
-    <div class="blob -b" style="background:var(--c-pink); top:6%; left:4%; opacity:.35;" aria-hidden="true"></div>
+  <section class="zone zone-yellow" id="now" aria-label="Current focus">
     <div class="section">
-    <div class="section-head"><span class="eyebrow -onlight" style="background:var(--cream); color:var(--ink);">Selected work — 04</span></div>
-
-    <article aria-label="Featured project">
-      <div class="project-head reveal">
-        <span class="eyebrow -onlight" style="background:var(--cream); color:var(--ink);">Featured — 01</span>
-        <h3 class="project-title">LEDGR</h3>
-        <p class="project-sub">AI‑powered finance controller</p>
-        <div class="project-stack"><span>Python</span><span>FastAPI</span><span>Machine Learning</span></div>
-        <div class="project-links">
-          <a class="btn -onblue" href="https://github.com/shijo-hex" target="_blank" rel="noopener">View on GitHub</a>
-        </div>
-      </div>
-      <div class="chapters" id="project-chapters">
-        <div class="chapter reveal"><div class="ch-label"><b>01</b> Context</div><p>Personal finance is scattered across statements, apps and spreadsheets, and most tools only show what already happened rather than helping decide what to do next.</p></div>
-        <div class="chapter reveal"><div class="ch-label"><b>02</b> Problem</div><p>Build something that reads real transaction data, understands it, and turns it into a controller a person can actually act on — not another dashboard to check and ignore.</p></div>
-        <div class="chapter reveal"><div class="ch-label"><b>03</b> Architecture</div><p>A FastAPI backend handles ingestion and a machine‑learning layer for categorisation and forecasting; a lightweight client surfaces the results as clear, specific guidance instead of raw numbers.</p></div>
-        <div class="chapter reveal"><div class="ch-label"><b>04</b> Implementation</div><p>Built in Python end to end — data pipeline, model, and API — with an emphasis on keeping the ML layer replaceable as the categorisation and forecasting approach improves.</p></div>
-        <div class="chapter reveal"><div class="ch-label"><b>05</b> Result</div><p>A working finance controller that turns raw transactions into a running, understandable picture of where money is going — the seed of a system rather than a one‑off script.</p></div>
-      </div>
-    </article>
-
-
-    <article class="madi-feature reveal" aria-labelledby="madi-title">
-      <div class="madi-copy">
-        <div class="madi-kicker"><span class="eyebrow -onink">From the lab</span><span>Interactive prototype · 02</span></div>
-        <h3 class="madi-title" id="madi-title">madi<span>.me</span></h3>
-        <p class="madi-tagline">Small tasks.<br>Tiny victories.</p>
-        <p class="madi-description">A tiny animated task-adventure where every completed challenge unlocks the next part of the world.</p>
-        <div class="madi-meta">Type&nbsp; / &nbsp;Interactive prototype<br>Mechanic&nbsp; / &nbsp;Sequential task progression</div>
-        <div class="madi-stack" aria-label="Built with HTML, CSS, JavaScript, SVG, and animation"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>SVG</span><span>Animation</span></div>
-        <div class="madi-links">
-          <a class="btn madi-play" href="./madi/madi.html" aria-label="Play madi.me interactive prototype">Play madi.me ↗</a>
-          <a class="btn madi-source" href="https://github.com/shijo-hex/shijo-site/tree/main/madi" target="_blank" rel="noopener">Source ↗</a>
-        </div>
-      </div>
-      <div class="madi-scene" aria-hidden="true">
-        <div class="madi-sky"></div><span class="madi-preview-label">A little world, in progress</span><div class="madi-sun"></div><div class="madi-cloud"></div>
-        <div class="madi-hill madi-hill-back"></div><div class="madi-hill"></div>
-        <div class="madi-house"><div class="madi-roof"></div><div class="madi-window"></div><div class="madi-door"></div></div>
-        <div class="madi-character"><div class="madi-character-head"></div><div class="madi-character-body"></div></div><span class="madi-star">✦</span><div class="madi-ground"></div>
-      </div>
-    </article>
-
-
-    <div class="archive">
-      <div class="section-head" style="margin-bottom:8px;"><span class="eyebrow -onlight" style="background:var(--cream); color:var(--ink);">Archive</span></div>
-      <div class="archive-list" id="archive-list"></div>
-    </div>
-    </div>
-  </section>
-
-  <section class="zone zone-yellow" id="engineering" aria-label="Status">
-    <div class="section">
-    <div class="section-head"><span class="eyebrow -onink">Status — 05</span></div>
-    <div class="status-grid reveal">
-      <div class="status-card"><div class="k">Build</div><div class="v">Online</div></div>
-      <div class="status-card"><div class="k">GitHub</div><div class="v">Active</div></div>
-      <div class="status-card"><div class="k">Stack</div><div class="v" style="font-size:1.1rem;">Py · TS · React</div></div>
-      <div class="status-card"><div class="k">Shipped</div><div class="v" id="stat-ticker" data-ticker="2" data-suffix="+">0</div></div>
-    </div>
+    <div class="section-head"><span class="eyebrow -onink">Now — 06</span></div>
+    <h2 class="section-title">Still in motion.</h2>
+    <p class="now-copy">Currently building small, complete software experiences — including Madi and this portfolio — while exploring applied AI/ML and the product details that make technical systems feel easy to use.</p>
+    <div class="contact-actions"><a class="btn -onblue" href="https://github.com/shijo-hex" target="_blank" rel="noopener">More experiments on GitHub ↗</a></div>
     </div>
   </section>
 
@@ -523,10 +552,6 @@ body.reduced-motion .about-statement .line span{ transform:none; }
       <a class="c-link" href="mailto:hello@shijo.site">Email <span class="arr">↗</span></a>
       <a class="c-link" href="https://github.com/shijo-hex" target="_blank" rel="noopener">GitHub <span class="arr">↗</span></a>
       <a class="c-link" href="https://www.linkedin.com/in/shijo-sylan/" target="_blank" rel="noopener">LinkedIn <span class="arr">↗</span></a>
-    </div>
-    <div class="support-card reveal">
-      <div><span class="eyebrow -onink">Support</span><p>If something here was useful, you can support the work directly via UPI — no ads, no sponsors.</p></div>
-      <a class="btn" href="./pay/">Support via UPI</a>
     </div>
     </div>
   </section>
