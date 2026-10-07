@@ -200,10 +200,13 @@
     if (closeBtn) closeBtn.addEventListener("click", function () { closeMenu(true); });
     menu.querySelectorAll("a").forEach(function (a) { a.addEventListener("click", function () { closeMenu(false); }); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape" && menu.classList.contains("-open")) closeMenu(true); });
-    document.addEventListener("focusin", function (e) {
-      if (!menu.classList.contains("-open") || menu.contains(e.target)) return;
-      var focusable = menu.querySelectorAll("a,button");
-      if (focusable.length) focusable[0].focus();
+    menu.addEventListener("keydown", function (e) {
+      if (e.key !== "Tab") return;
+      var focusable = Array.prototype.slice.call(menu.querySelectorAll("a,button"));
+      if (!focusable.length) return;
+      var first = focusable[0], last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     });
   })();
 
